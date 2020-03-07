@@ -75,38 +75,38 @@ function dbconnect($dieonerror = true) {
 	global $pmp_sqlhost, $pmp_sqluser, $pmp_sqlpass, $pmp_sqldatabase;
 	global $pmp_timezone;
 
-	$db = @mysql_connect($pmp_sqlhost, $pmp_sqluser, $pmp_sqlpass);
+	$db = @mysqli_connect($pmp_sqlhost, $pmp_sqluser, $pmp_sqlpass);
 
-	// Can't connect to the mysql-database
+	// Can't connect to the mysqli-database
 	if ( !$db && $dieonerror ) {
-		$the_error = "\nmySQL error: " . mysql_error() . "\n";
-		$the_error .= "mySQL error code: " . mysql_errno() . "\n";
+		$the_error = "\nmysqli error: " . mysqli_error() . "\n";
+		$the_error .= "mysqli error code: " . mysqli_errno() . "\n";
 		$the_error .= "Date: " . date("Y-m-d H:i:s");
 		echo "<html><head><title>Database Error</title><style>P,BODY{ font-family:arial,sans-serif; font-size:11px; }</style>
 			</head><body>&nbsp;<br><br><blockquote><b>There appears to be an error with the database.</b>
 			<br>You can try to refresh the page by clicking <a href=\"javascript:window.location=window.location;\">here</a>
 			, if this does not fix the error, please connect the Webmaster<br><br><b>Error returned:</b><br>
-			<form name='mysql'><textarea rows=\"15\" cols=\"45\">" . htmlspecialchars($the_error) . "</textarea></form>
+			<form name='mysqli'><textarea rows=\"15\" cols=\"45\">" . htmlspecialchars($the_error) . "</textarea></form>
 			<br></blockquote></body></html>" ;
 		exit();
 	}
 
 	// Set encoding for database
-	@mysql_set_charset('utf8', $db);
-	@mysql_query("SET time_zone='".$pmp_timezone."'");
+	@mysqli_set_charset('utf8', $db);
+	@mysqli_query("SET time_zone='".$pmp_timezone."'");
 
-	$db_select = @mysql_select_db($pmp_sqldatabase);
+	$db_select = @mysqli_select_db($pmp_sqldatabase);
 
 	// Can't switch to the database
 	if ( !$db_select && $dieonerror ) {
-		$the_error .= "\nmySQL error: ".mysql_error()."\n";
-		$the_error .= "mySQL error code: ".mysql_errno()."\n";
+		$the_error .= "\nmysqli error: ".mysqli_error()."\n";
+		$the_error .= "mysqli error code: ".mysqli_errno()."\n";
 		$the_error .= "Date: ".date("Y-m-d H:i:s");
 		echo "<html><head><title>Database Error</title><style>P,BODY{ font-family:arial,sans-serif; font-size:11px; }</style>
 			</head><body>&nbsp;<br><br><blockquote><b>There appears to be an error with the database.</b>
 			<br>You can try to refresh the page by clicking <a href=\"javascript:window.location=window.location;\">here</a>
 			, if this does not fix the error, please connect the Webmaster<br><br><b>Error returned:</b><br>
-			<form name='mysql'><textarea rows=\"15\" cols=\"45\">" . htmlspecialchars($the_error) . "</textarea></form>
+			<form name='mysqli'><textarea rows=\"15\" cols=\"45\">" . htmlspecialchars($the_error) . "</textarea></form>
 			<br></blockquote></body></html>" ;
 		exit();
 	}
@@ -118,11 +118,11 @@ function dbconnect($dieonerror = true) {
 // If $continueonerror is set to true the script will abort with an error message if the query fails.
 function dbexec($sql, $continueonerror = false) {
 	$sql = replace_table_prefix($sql);
-	$result = @mysql_query($sql);
+	$result = @mysqli_query($sql);
 
 	if ( !$continueonerror ) {
 		if ( !$result ) {
-			echo "<strong>SQL-Statement failed:</strong><br /><pre>" . mysql_errno() . " - " . mysql_error()
+			echo "<strong>SQL-Statement failed:</strong><br /><pre>" . mysqli_errno() . " - " . mysqli_error()
 				. "\n\nQuery:\n$sql</pre>";
 			die;
 		}
@@ -133,7 +133,7 @@ function dbexec($sql, $continueonerror = false) {
 
 // Close database
 function dbclose() {
-	mysql_close();
+	mysqli_close();
 }
 
 // Replace the tableprefix pmp_ with the user defined prefix
@@ -497,43 +497,43 @@ function inccounter($filmid = '') {
 	$sid = session_id();
 
 	if ( $filmid != '' ) {
-		$sql = 'SELECT COUNT(id) AS cnt FROM pmp_counter_profil WHERE sid = \'' . mysql_real_escape_string($sid)
-			. '\' AND NOW() < DATE_ADD(date, INTERVAL 2 HOUR) AND film_id = \'' . mysql_real_escape_string($filmid) . '\'';
+		$sql = 'SELECT COUNT(id) AS cnt FROM pmp_counter_profil WHERE sid = \'' . mysqli_real_escape_string($sid)
+			. '\' AND NOW() < DATE_ADD(date, INTERVAL 2 HOUR) AND film_id = \'' . mysqli_real_escape_string($filmid) . '\'';
 		$result = dbexec($sql);
 
-		if ( mysql_result($result, 0) == 0 ) {
+		if ( mysqli_result($result, 0) == 0 ) {
 			$query = 'INSERT INTO pmp_counter_profil (date, film_id, sid) VALUES (NOW(),\''
-				. mysql_real_escape_string($filmid) . '\', \'' . mysql_real_escape_string($sid) . '\')';
+				. mysqli_real_escape_string($filmid) . '\', \'' . mysqli_real_escape_string($sid) . '\')';
 			$result = dbexec($query);
 		}
 
 		$query = 'SELECT COUNT(id) AS count_all FROM pmp_counter_profil WHERE film_id = \''
-			. mysql_real_escape_string($filmid) . '\'';
+			. mysqli_real_escape_string($filmid) . '\'';
 		$result = dbexec($query);
-		$all = mysql_result($result, 0, 'count_all');
+		$all = mysqli_result($result, 0, 'count_all');
 
 		$query = 'SELECT COUNT(id) AS count_today FROM pmp_counter_profil WHERE date LIKE CONCAT(CURRENT_DATE,
-			\'%\') AND film_id = \'' . mysql_real_escape_string($filmid) . '\'';
+			\'%\') AND film_id = \'' . mysqli_real_escape_string($filmid) . '\'';
 		$result = dbexec($query);
-		$today = mysql_result($result, 0, 'count_today');
+		$today = mysqli_result($result, 0, 'count_today');
 	}
 	else {
-		$sql = 'SELECT COUNT(id) AS cnt FROM pmp_counter WHERE sid = \'' . mysql_real_escape_string($sid)
+		$sql = 'SELECT COUNT(id) AS cnt FROM pmp_counter WHERE sid = \'' . mysqli_real_escape_string($sid)
 			. '\' AND NOW() < DATE_ADD(date, INTERVAL 2 HOUR)';
 		$result = dbexec($sql);
 
-		if ( mysql_result($result, 0) == 0 ) {
-			$query = 'INSERT INTO pmp_counter (date, sid) VALUES ( NOW(), \'' . mysql_real_escape_string($sid) . '\')';
+		if ( mysqli_result($result, 0) == 0 ) {
+			$query = 'INSERT INTO pmp_counter (date, sid) VALUES ( NOW(), \'' . mysqli_real_escape_string($sid) . '\')';
 			$result = dbexec($query);
 		}
 
 		$query = 'SELECT COUNT(id) AS count_all FROM pmp_counter';
 		$result = dbexec($query);
-		$all = mysql_result($result, 0, 'count_all');
+		$all = mysqli_result($result, 0, 'count_all');
 
 		$query = 'SELECT COUNT(*) AS count_today FROM pmp_counter WHERE date LIKE CONCAT(CURRENT_DATE, \'%\')';
 		$result = dbexec($query);
-		$today = mysql_result($result, 0, 'count_today');
+		$today = mysqli_result($result, 0, 'count_today');
 	}
 
 	return array('all' => $all, 'today' => $today);
@@ -619,14 +619,14 @@ function exchange($from, $to, $value) {
 		$ratefrom = 1;
 	}
 	else {
-		$ratefrom = @mysql_result(dbexec('SELECT rate FROM pmp_rates WHERE id = \'' . $from . '\''), 0);
+		$ratefrom = @mysqli_result(dbexec('SELECT rate FROM pmp_rates WHERE id = \'' . $from . '\''), 0);
 	}
 
 	if ( $to == 'EUR' ) {
 		$rateto = 1;
 	}
 	else {
-		$rateto = mysql_result(dbexec('SELECT rate FROM pmp_rates WHERE id = \'' . $to . '\''), 0);
+		$rateto = mysqli_result(dbexec('SELECT rate FROM pmp_rates WHERE id = \'' . $to . '\''), 0);
 	}
 
 	if ( (is_numeric($ratefrom)) && (is_numeric($rateto)) ) {
@@ -783,7 +783,7 @@ function get_collections() {
 	$sql = "SELECT collection FROM `pmp_collection` WHERE collection != 'Owned' AND collection != 'Ordered' AND collection != 'Wish List'";
 	$res = dbexec($sql, true);
 	$collections = array('Owned', 'Ordered', 'Wish List');
-	while ( $row = mysql_fetch_object($res) ) {
+	while ( $row = mysqli_fetch_object($res) ) {
 		$collections[] = $row->collection;
 	}
 	return $collections;

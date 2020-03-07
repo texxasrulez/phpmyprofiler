@@ -82,7 +82,7 @@ function getThemes() {
 	if ( $handle ) {
 		while ( $file = readdir($handle) ) {
 			if ( $file != "." && $file != ".." ) {
-				$tmp = new theme($file);
+				$tmp = new pmp_theme($file);
 				if ( $tmp->id !== false ) {
 					$res[] = $tmp;
 				}

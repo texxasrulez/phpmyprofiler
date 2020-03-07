@@ -89,10 +89,10 @@ header('Content-type: text/html; charset=utf-8');
 		    }
 		}
 
-		function check_mysql() {
+		function check_mysqli() {
 		    global $failed;
 
-		    if ( function_exists( 'mysql_connect' ) ) {
+		    if ( function_exists( 'mysqli_connect' ) ) {
 			echo '<b><font color="green">' . t('Available') . '</font></b>';
 		    }
 		    else {
@@ -128,8 +128,8 @@ header('Content-type: text/html; charset=utf-8');
 					<td style="width: 150px"><?php check_phpversion(); ?></td>
 				    </tr>
 				    <tr>
-					<td>&nbsp; - MySQL Support</td>
-					<td style="width: 150px"><?php check_mysql(); ?></td>
+					<td>&nbsp; - mysqli Support</td>
+					<td style="width: 150px"><?php check_mysqli(); ?></td>
 				    </tr>
 				    <tr>
 					<td>&nbsp; - Session Support</td>

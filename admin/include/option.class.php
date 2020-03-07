@@ -19,7 +19,7 @@
 
 define("OPTION_PASSWORD", 3);
 
-class option {
+class pmp_option {
 	public $Var;
 	public $Child;  // 1 = Text, 2 = Selection, 3 = Password
 	public $Name;
