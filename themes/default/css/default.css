@@ -859,3 +859,16 @@ textarea.text {
 	font-size : 12px;
 	width : 98%;
 }
+
+/* Sticky header layout: keep banner + shortcut bar pinned while preserving flow */
+table.banner {
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+}
+
+table.shortcut-bar {
+	position: sticky;
+	top: 60px;
+	z-index: 1001;
+}

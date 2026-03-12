@@ -497,12 +497,12 @@ location.replace("'.str_replace('"', '\\"', $url).'");
         } else {
             $uriBase = $uriAll;
         }
-        if (!strlen($url) || $url{0} == '#') {
+        if (!strlen($url) || $url[0] == '#') {
             $url = $uriAll.$url;
-        } elseif ($url{0} == '?') {
+        } elseif ($url[0] == '?') {
             $url = $uriBase.$url;
         }
-        if ($url{0} == '/') {
+        if ($url[0] == '/') {
             return $server . $url;
         }
 
@@ -553,10 +553,10 @@ location.replace("'.str_replace('"', '\\"', $url).'");
             while ($pos < $len - 1) {
                 $link = array();
                 $pos = $len - strlen(ltrim(substr($line, $pos)));
-                if ($line{$pos} == ',') {
+                if ($line[$pos] == ',') {
                     ++$pos;
                     continue;
-                } else if ($line{$pos} != '<') {
+                } else if ($line[$pos] != '<') {
                     break;
                 }
                 $end = strpos($line, '>', $pos + 1);
@@ -567,12 +567,12 @@ location.replace("'.str_replace('"', '\\"', $url).'");
                 $pos = $end + 1;
 
                 while ($pos < $len - 1) {
-                    if ($line{$pos} == ',') {
+                    if ($line[$pos] == ',') {
                         $extracted[] = $link;
                         $link = array();
                         ++$pos;
                         continue;
-                    } else if ($line{$pos} != ';') {
+                    } else if ($line[$pos] != ';') {
                         break;
                     }
 
@@ -585,7 +585,7 @@ location.replace("'.str_replace('"', '\\"', $url).'");
                     $pos = $end + 1;
                     
                     $rest = trim(substr($line, $pos));
-                    if ($rest{0} == '"') {
+                    if ($line[$pos] == '"') {
                         $pos = strpos($line, '"', $pos) + 1;
                         $end = strpos($line, '"', $pos + 1);
                         $pval = substr($line, $pos, $end - $pos);
@@ -625,7 +625,7 @@ location.replace("'.str_replace('"', '\\"', $url).'");
                     } else if (!isset($link[$pname])) {
                         $link[$pname] = $pval;
                     }
-                    if ($end >= $len || $line{$end} == ',') {
+                    if ($end >= $len || $line[$end] == ',') {
                         break;
                     }
                 }

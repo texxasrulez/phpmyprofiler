@@ -267,13 +267,32 @@ class PiePlot {
 
     // Setup the legends
     function Legend($graph) {
+        if( !is_array($this->data) ) {
+            $this->data = array();
+        }
+        if( !is_array($this->legends) ) {
+            $this->legends = array();
+        }
+        if( !is_array($this->csimalts) ) {
+            $this->csimalts = array();
+        }
+        if( !is_array($this->csimtargets) ) {
+            $this->csimtargets = array();
+        }
+        if( !is_array($this->csimwintargets) ) {
+            $this->csimwintargets = array();
+        }
+
         $colors = array_keys($graph->img->rgb->rgb_table);
         sort($colors);
-        $ta=$this->themearr[$this->theme];
+        $ta = isset($this->themearr[$this->theme]) ? $this->themearr[$this->theme] : array();
         $n = count($this->data);
 
         if( $this->setslicecolors==null ) {
             $numcolors=count($ta);
+            if( $numcolors == 0 ) {
+                $numcolors = 1;
+            }
             if( class_exists('PiePlot3D',false) && ($this instanceof PiePlot3D) ) {
                 $ta = array_reverse(array_slice($ta,0,$n));
             }
@@ -281,6 +300,10 @@ class PiePlot {
         else {
             $this->setslicecolors = array_slice($this->setslicecolors,0,$n);
             $numcolors=count($this->setslicecolors);
+            if( $numcolors == 0 ) {
+                $this->setslicecolors = array('#888888');
+                $numcolors = 1;
+            }
             if( $graph->pieaa && !($this instanceof PiePlot3D) ) {
                 $this->setslicecolors = array_reverse($this->setslicecolors);
             }
@@ -332,10 +355,14 @@ class PiePlot {
             }
 
             if( $this->setslicecolors==null ) {
-                $graph->legend->Add($l,$colors[$ta[$i%$numcolors]],"",0,$this->csimtargets[$i],$alt,$wintarg);
+                $legendColor = isset($colors[$ta[$i%$numcolors]]) ? $colors[$ta[$i%$numcolors]] : '#888888';
+                $target = isset($this->csimtargets[$i]) ? $this->csimtargets[$i] : '';
+                $graph->legend->Add($l,$legendColor,"",0,$target,$alt,$wintarg);
             }
             else {
-                $graph->legend->Add($l,$this->setslicecolors[$i%$numcolors],"",0,$this->csimtargets[$i],$alt,$wintarg);
+                $legendColor = isset($this->setslicecolors[$i%$numcolors]) ? $this->setslicecolors[$i%$numcolors] : '#888888';
+                $target = isset($this->csimtargets[$i]) ? $this->csimtargets[$i] : '';
+                $graph->legend->Add($l,$legendColor,"",0,$target,$alt,$wintarg);
             }
         }
     }

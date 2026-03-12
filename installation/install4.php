@@ -15,16 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'install';
+$pmp_module = "install";
 
-require_once('../config.inc.php');
-require_once('../include/functions.php');
+require_once "../config.inc.php";
+require_once "../include/functions.php";
 
-header('Content-type: text/html; charset=utf-8');
+header("Content-type: text/html; charset=utf-8");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -62,11 +62,21 @@ header('Content-type: text/html; charset=utf-8');
 
 			<tr style="height: 30px">
 			    <td style="width: 10px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Pre-Installation Check'); ?></td>	<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 1'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 2'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 3'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-on"> <?php echo t('Finish'); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Pre-Installation Check",
+       ); ?></td>	<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 1",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 2",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 3",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-on"> <?php echo t(
+           "Finish",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
 			    <td style="width: 10px">&nbsp;</td>
 			</tr>
 		    </table>
@@ -82,7 +92,9 @@ header('Content-type: text/html; charset=utf-8');
 				<table cellpadding="3" cellspacing="0" border="0" width="100%" class="maintests">
 				    <tr>
 					<td><img src="images/messagebox_info.jpg" border="0" alt="" /></td>
-					<td><?php echo t('The Installation has finished. For your security, you must delete the folder "installation".'); ?></td>
+					<td><?php echo t(
+         'The Installation has finished. For your security, you must delete the folder "installation".',
+     ); ?></td>
 				    </tr>
 				</table>
 			    </td>
@@ -96,8 +108,12 @@ header('Content-type: text/html; charset=utf-8');
 		    <table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr>
 			    <td align="center" style="text-align: center">
-				<input type="submit" name="submit" class="next" value="<?php echo t('Frontpage'); ?>" onclick="location.href='../'" /> &nbsp;
-				<input type="submit" name="submit" class="next" value="<?php echo t('Administration'); ?>" onclick="location.href='../admin'" />
+				<input type="submit" name="submit" class="next" value="<?php echo t(
+        "Frontpage",
+    ); ?>" onclick="location.href='../'" /> &nbsp;
+				<input type="submit" name="submit" class="next" value="<?php echo t(
+        "Administration",
+    ); ?>" onclick="location.href='../admin'" />
 			    </td>
 			</tr>
 		    </table>

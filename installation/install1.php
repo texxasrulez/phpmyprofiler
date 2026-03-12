@@ -15,51 +15,68 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'install';
+$pmp_module = "install";
 
-require('../config.inc.php');
-require_once('../include/functions.php');
-require_once('../admin/include/functions.php');
-require_once('../admin/include/option.class.php');
-require_once('../admin/include/options.php');
+require "../config.inc.php";
+require_once "../include/functions.php";
+require_once "../admin/include/functions.php";
+require_once "../admin/include/option.class.php";
+require_once "../admin/include/options.php";
 
-$configfile = '../config.inc.php';
+$configfile = "../config.inc.php";
 
 // Save the Configuration File
 
-if( (isset($_POST['action'])) && ($_POST['action'] == 'save') ) {
-    $data = "<?php \n// " . t('Generated:') . " " .  date("r") . "\n\n";
-    foreach ( $Options as $item ) {
-	if ( @get_class($item) == 'option' ) {
-	    $data .= $item->getSkript();
-	}
-	else {
-	    $data .= "\n\n// " . html_entity_decode(t($item), ENT_COMPAT, 'UTF-8') . "\n// " . str_pad('', strlen(html_entity_decode(t($item), ENT_COMPAT, 'UTF-8')), '=') . "\n\n";
-	}
+if (isset($_POST["action"]) && $_POST["action"] == "save") {
+    $data = "<?php \n// " . t("Generated:") . " " . date("r") . "\n\n";
+    foreach ($Options as $item) {
+        if (is_object($item) && strtolower(get_class($item)) == "option") {
+            $data .= $item->getSkript();
+        } else {
+            $data .=
+                "\n\n// " .
+                html_entity_decode(t($item), ENT_COMPAT, "UTF-8") .
+                "\n// " .
+                str_pad(
+                    "",
+                    strlen(html_entity_decode(t($item), ENT_COMPAT, "UTF-8")),
+                    "=",
+                ) .
+                "\n\n";
+        }
     }
     $data .= "?>";
 
-    if ( !@file_put_contents($configfile, $data) ) {
-	$error = t('No write acccess to config.inc.php. Settings not saved.');
-    }
-    else {
-	require('../config.inc.php');
+    if (!@file_put_contents($configfile, $data)) {
+        $error = t("No write acccess to config.inc.php. Settings not saved.");
+    } else {
+        require "../config.inc.php";
 
-	if ( !@mysql_connect($pmp_sqlhost, $pmp_sqluser, $pmp_sqlpass) ) {
-	    $error = t('Wrong access data for MySQL Database.');
-	}
-	else {
-	    header("Location:install2.php");
-	    exit();
-	}
+        $dbHost = trim((string) $pmp_sqlhost);
+        $dbUser = trim((string) $pmp_sqluser);
+        $dbPass = (string) $pmp_sqlpass;
+
+        if (!@mysql_connect($dbHost, $dbUser, $dbPass)) {
+            $error =
+                t("Wrong access data for MySQL Database.") .
+                "<br />Host: " .
+                htmlspecialchars($dbHost, ENT_COMPAT, "UTF-8") .
+                "<br />User: " .
+                htmlspecialchars($dbUser, ENT_COMPAT, "UTF-8") .
+                "<br />MySQL: " .
+                htmlspecialchars((string) mysql_error(), ENT_COMPAT, "UTF-8");
+        } else {
+            header("Location:install2.php");
+            exit();
+        }
     }
 }
 
-header('Content-type: text/html; charset=utf-8');
+header("Content-type: text/html; charset=utf-8");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -97,65 +114,76 @@ header('Content-type: text/html; charset=utf-8');
 
 			    <tr style="height: 30px">
 				<td style="width: 10px">&nbsp;</td>
-				<td class="step-off"><?php echo t('Pre-Installation Check'); ?></td>	<td style="width: 3px">&nbsp;</td>
-				<td class="step-on"> <?php echo t('Step 1'); ?></td>					<td style="width: 3px">&nbsp;</td>
-				<td class="step-off"><?php echo t('Step 2'); ?></td>					<td style="width: 3px">&nbsp;</td>
-				<td class="step-off"><?php echo t('Step 3'); ?></td>					<td style="width: 3px">&nbsp;</td>
-				<td class="step-off"><?php echo t('Finish'); ?></td>					<td style="width: 3px">&nbsp;</td>
+				<td class="step-off"><?php echo t(
+        "Pre-Installation Check",
+    ); ?></td>	<td style="width: 3px">&nbsp;</td>
+				<td class="step-on"> <?php echo t(
+        "Step 1",
+    ); ?></td>					<td style="width: 3px">&nbsp;</td>
+				<td class="step-off"><?php echo t(
+        "Step 2",
+    ); ?></td>					<td style="width: 3px">&nbsp;</td>
+				<td class="step-off"><?php echo t(
+        "Step 3",
+    ); ?></td>					<td style="width: 3px">&nbsp;</td>
+				<td class="step-off"><?php echo t(
+        "Finish",
+    ); ?></td>					<td style="width: 3px">&nbsp;</td>
 				<td style="width: 10px">&nbsp;</td>
 			    </tr>
 			</table>
 
 		    </div>
 
-		    <?php
-		    if ( isset($error) ) {
-		    ?>
+		    <?php if (isset($error)) { ?>
 
 		    <div id="mainerror">
 			<div class="error_box">
-			    <div class="error_headline"><?php echo t('Sorry, an error has occurred') . ':'; ?></div>
+			    <div class="error_headline"><?php echo t("Sorry, an error has occurred") .
+           ":"; ?></div>
 			    <div class="error_msg"><?php echo $error; ?></div>&nbsp;
 			</div>
 		    </div>
 
-		    <?php
-		    }
-		    ?>
+		    <?php } ?>
 
 		    <div class="maintext">
 			<table cellpadding="0" cellspacing="0" border="0" width="100%">
 
-			    <tr><td colspan="3" class="mainheader"><?php echo t('Main settings'); ?></td></tr>
+			    <tr><td colspan="3" class="mainheader"><?php echo t(
+           "Main settings",
+       ); ?></td></tr>
 			    <tr><td colspan="3">&nbsp;</td></tr>
 
 			    <tr>
-				<td valign="top" align="left" style="padding-left: 5px; width: 200px"><?php echo t('Please enter the access data to the MySQL database.'); ?></td>
+				<td valign="top" align="left" style="padding-left: 5px; width: 200px"><?php echo t(
+        "Please enter the access data to the MySQL database.",
+    ); ?></td>
 				<td style="width: 3px">&nbsp;</td>
 				<td>
 				    <table cellpadding="3" cellspacing="0" border="0" width="100%" class="maintests">
 					<tr>
-					    <td><?php echo t('Database server'); ?></td>
+					    <td><?php echo t("Database server"); ?></td>
 					    <td style="width: 100px"><input type="text" name="pmp_sqlhost" value="<?php echo $pmp_sqlhost; ?>" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('Database name'); ?></td>
+					    <td><?php echo t("Database name"); ?></td>
 					    <td style="width: 100px"><input type="text" name="pmp_sqldatabase" value="<?php echo $pmp_sqldatabase; ?>" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('Database user'); ?></td>
+					    <td><?php echo t("Database user"); ?></td>
 					    <td style="width: 100px"><input type="text" name="pmp_sqluser" value="<?php echo $pmp_sqluser; ?>" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('Database password'); ?></td>
+					    <td><?php echo t("Database password"); ?></td>
 					    <td style="width: 100px"><input type="password" name="pmp_sqlpass" value="<?php echo $pmp_sqlpass; ?>" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('Tableprefix'); ?></td>
+					    <td><?php echo t("Tableprefix"); ?></td>
 					    <td style="width: 100px"><input type="text" name="pmp_table_prefix" value="<?php echo $pmp_table_prefix; ?>" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('URL to phpMyprofiler'); ?></td>
+					    <td><?php echo t("URL to phpMyprofiler"); ?></td>
 					    <td style="width: 100px"><input type="text" name="pmp_basepath" value="<?php echo $pmp_basepath; ?>" /></td>
 					</tr>
 				    </table>
@@ -170,7 +198,9 @@ header('Content-type: text/html; charset=utf-8');
 			    <tr>
 				<td align="center" style="text-align: center">
 				    <input type="text" name="action" value="save" style="visibility: hidden; display: none" />
-				    <input type="submit" name="submit" class="next" value="<?php echo t('Next'); ?>" />
+				    <input type="submit" name="submit" class="next" value="<?php echo t(
+            "Next",
+        ); ?>" />
 				</td>
 			    </tr>
 			</table>

@@ -16,15 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
 // No direct access
-defined('_PMP_REL_PATH') or die('Not allowed! Possible hacking attempt detected!');
+defined("_PMP_REL_PATH") or
+    die("Not allowed! Possible hacking attempt detected!");
 
-$pmp_module = 'credits';
+$pmp_module = "credits";
 
-$smarty = new pmp_Smarty;
-$smarty->loadFilter('output', 'trimwhitespace');
+$smarty = new pmp_Smarty();
+$smarty->loadFilter("output", "trimwhitespace");
 
-$smarty->display('credits.tpl');
+$smarty->display("credits.tpl");
 ?>

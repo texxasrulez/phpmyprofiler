@@ -15,6 +15,7 @@
  * @subpackage Compiler
  * @ignore
  */
+#[\AllowDynamicProperties]
 abstract class _smarty_parsetree
 {
     /**

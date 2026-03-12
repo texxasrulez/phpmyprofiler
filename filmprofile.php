@@ -16,51 +16,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
 // No direct access
-defined('_PMP_REL_PATH') or die('Not allowed! Possible hacking attempt detected!');
+defined("_PMP_REL_PATH") or
+    die("Not allowed! Possible hacking attempt detected!");
 
-$pmp_module = 'filmprofile';
+$pmp_module = "filmprofile";
 
-require_once('config.inc.php');
-require_once('include/DVD.class.php');
+require_once "config.inc.php";
+require_once "include/DVD.class.php";
 
 // Check values
-if ( isset($_GET['id']) ) {
-	$smarty = new pmp_Smarty;
-	$smarty->loadFilter('output', 'trimwhitespace');
-	$smarty->assign('pmp_theme', $pmp_theme);
-	$smarty->assign('pmp_review_type', $pmp_review_type);
-	dbconnect();
+if (isset($_GET["id"])) {
+    $smarty = new pmp_Smarty();
+    $smarty->loadFilter("output", "trimwhitespace");
+    $smarty->assign("pmp_theme", $pmp_theme);
+    $smarty->assign("pmp_review_type", $pmp_review_type);
+    dbconnect();
 
-	// Page selected?
-	if ( !empty($_GET['page']) ) {
-		if ( !is_numeric($_GET['page']) ) {
-			$_GET['page'] = 1;
-		}
-	}
-	else {
-		$_GET['page'] = 1;
-	}
+    // Page selected?
+    if (!empty($_GET["page"])) {
+        if (!is_numeric($_GET["page"])) {
+            $_GET["page"] = 1;
+        }
+    } else {
+        $_GET["page"] = 1;
+    }
 
-	// Get screenshots on page 1
-	if ($_GET['page'] == 1) {
-		$filenames = getScreenshots ($_GET['id']);
-		if ( isset($filenames) ) {
-			sort($filenames);
-			$smarty->assign('screenshots', $filenames);
-		}
-	}
+    // Get screenshots on page 1
+    if ($_GET["page"] == 1) {
+        $filenames = getScreenshots($_GET["id"]);
+        if (isset($filenames)) {
+            sort($filenames);
+            $smarty->assign("screenshots", $filenames);
+        }
+    }
 
-	// Increase counter for profile
-	$smarty->assign('counter', inccounter($_GET['id']));
+    // Increase counter for profile
+    $smarty->assign("counter", inccounter($_GET["id"]));
 
-	// Get dvd data
-	$smarty->assign('dvd', new DVD($_GET['id']));
+    // Get dvd data
+    $smarty->assign("dvd", new DVD($_GET["id"]));
 
-	dbclose();
+    dbclose();
 
-	$smarty->display('filmprofile.tpl');
+    $smarty->display("filmprofile.tpl");
 }
 ?>

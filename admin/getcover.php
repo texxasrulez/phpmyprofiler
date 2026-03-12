@@ -15,50 +15,63 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'admin_getcover';
+$pmp_module = "admin_getcover";
 
-// If no cover id isset die
-if ( !isset($_GET['cover']) ) {
-	exit();
+require_once "../config.inc.php";
+require_once "../admin/include/functions.php";
+require_once "../include/pmp_Smarty.class.php";
+
+$cover_id = preg_replace(
+    "/[^A-Za-z0-9]/",
+    "",
+    request_string($_GET, "cover", ""),
+);
+if ($cover_id === "") {
+    exit();
 }
-
-require_once('../config.inc.php');
-require_once('../admin/include/functions.php');
-require_once('../include/pmp_Smarty.class.php');
 
 isadmin();
+admin_require_csrf();
 
-$smarty = new pmp_Smarty;
-$smarty->loadFilter('output', 'trimwhitespace');
-$smarty->compile_dir = '../templates_c';
+$smarty = new pmp_Smarty();
+$smarty->loadFilter("output", "trimwhitespace");
+$smarty->compile_dir = "../templates_c";
 
-if ( isset($_GET['nohead']) ) {
-	$smarty->assign('nohead', true);
-}
-else {
-	$smarty->assign('header', t('Get Cover'));
-	$smarty->assign('header_img', 'getcover');
-	$smarty->assign('session', session_name() . "=" . session_id() );
-}
-
-if ( !is_writable( "../cover/" ) ) {
-	$smarty->assign('Error', t('No write access in folder "cover".'));
-}
-else {
-	$cover = getRemoteContent('http://www.invelos.com/mpimages/'. substr($_GET['cover'], 0, 2 ). '/' . $_GET['cover'] . '.jpg');
-
-	if ( !empty($cover) ) {
-		@file_put_contents('../cover/' . $_GET['cover'] . '.jpg', $cover);
-		$smarty->assign('cover', $_GET['cover']);
-	}
-	else {
-		$smarty->assign('Error', t('Can\'t download the cover. Perhaps there is no cover for this DVD or your webserver doesn\'t allow accessing remote content.'));
-	}
+if (isset($_GET["nohead"])) {
+    $smarty->assign("nohead", true);
+} else {
+    $smarty->assign("header", t("Get Cover"));
+    $smarty->assign("header_img", "getcover");
+    $smarty->assign("session", "");
 }
 
-$smarty->display('admin/getcover.tpl');
+if (!is_writable("../cover/")) {
+    $smarty->assign("Error", t('No write access in folder "cover".'));
+} else {
+    $cover = getRemoteContent(
+        "http://www.invelos.com/mpimages/" .
+            substr($cover_id, 0, 2) .
+            "/" .
+            $cover_id .
+            ".jpg",
+    );
+
+    if (!empty($cover)) {
+        @file_put_contents("../cover/" . $cover_id . ".jpg", $cover);
+        $smarty->assign("cover", $cover_id);
+    } else {
+        $smarty->assign(
+            "Error",
+            t(
+                'Can\'t download the cover. Perhaps there is no cover for this DVD or your webserver doesn\'t allow accessing remote content.',
+            ),
+        );
+    }
+}
+
+$smarty->display("admin/getcover.tpl");
 ?>

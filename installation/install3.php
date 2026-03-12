@@ -15,64 +15,62 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'install';
+$pmp_module = "install";
 
-require_once('../config.inc.php');
-require_once('../include/functions.php');
-require_once('../admin/include/functions.php');
+require_once "../config.inc.php";
+require_once "../include/functions.php";
+require_once "../admin/include/functions.php";
 
-$configfile = '../passwd.inc.php';
-$user = '';
+$configfile = "../passwd.inc.php";
+$user = "";
 
-if( (isset($_POST['action'])) && ($_POST['action'] == 'save') ) {
-    if ( empty($_POST['username']) ) {
-		$error = t('You must enter a username.');
-    }
-    else if ( (empty($_POST['password'])) || (empty($_POST['password2'])) ) {
-        $error = t('You must enter a password.');
-        $user = $_POST['username'];
-    }
-    else if ( $_POST['password'] != $_POST['password2'] ) {
-		$error = t('The Password do not match.');
-		$user = $_POST['username'];
-    }
-    else {
-		$data  = "<?php\n// " . t('Configuration File of Administration') . "\n// " . t('Generated:') . " " .  date("r") . "\n\n";
-		$data .= '$pmp_admin' ." = '" . $_POST['username'] . "';" . "\n";
-		$data .= '$pmp_passwd' . " = '" . password_hash($_POST['password'], PASSWORD_BCRYPT, array('costs'=>11)) . "';" . "\n";
-		$data .= "\n?>";
+if (isset($_POST["action"]) && $_POST["action"] == "save") {
+    if (empty($_POST["username"])) {
+        $error = t("You must enter a username.");
+    } elseif (empty($_POST["password"]) || empty($_POST["password2"])) {
+        $error = t("You must enter a password.");
+        $user = $_POST["username"];
+    } elseif ($_POST["password"] != $_POST["password2"]) {
+        $error = t("The Password do not match.");
+        $user = $_POST["username"];
+    } else {
+        $data =
+            "<?php\n// " .
+            t("Configuration File of Administration") .
+            "\n// " .
+            t("Generated:") .
+            " " .
+            date("r") .
+            "\n\n";
+        $data .= '$pmp_admin' . " = '" . $_POST["username"] . "';" . "\n";
+        $data .=
+            '$pmp_passwd' .
+            " = '" .
+            password_hash($_POST["password"], PASSWORD_BCRYPT, [
+                "costs" => 11,
+            ]) .
+            "';" .
+            "\n";
+        $data .= "\n?>";
 
-		if ( !@file_put_contents($configfile, $data) ) {
-			$error = t('An error occurs while writing to') . ' "' . basename($configfile) . '".';
-		}
-		else {
-			// Try and track new installs to see if it is worthwhile continueing development
-			@include_once('../admin/include/PiwikTracker.php');
-
-			if ( class_exists( 'PiwikTracker' ) ) {
-				$piwikTracker = new PiwikTracker( $idSite = 1 , 'http://www.phpmyprofiler.de/piwik/');
-				// We don't need or want the dist-version
-				$php_ver = explode("-", phpversion());
-				$piwikTracker->setCustomVariable( 1, 'php_version', $php_ver[0] );
-				$piwikTracker->setCustomVariable( 2, 'pmp_version', $pmp_version );
-				// Don't send url, referrer and user agent!
-				$piwikTracker->setUrl('none');
-				$piwikTracker->setUrlReferrer('none');
-				$piwikTracker->setUserAgent('unknown');
-				$piwikTracker->doTrackPageView( 'Installation completed' );
-			}
-
-			header("Location:install4.php");
-			exit();
-		}
+        if (!@file_put_contents($configfile, $data)) {
+            $error =
+                t("An error occurs while writing to") .
+                ' "' .
+                basename($configfile) .
+                '".';
+        } else {
+            header("Location:install4.php");
+            exit();
+        }
     }
 }
 
-header('Content-type: text/html; charset=utf-8');
+header("Content-type: text/html; charset=utf-8");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -110,36 +108,45 @@ header('Content-type: text/html; charset=utf-8');
 
 			<tr style="height: 30px">
 			    <td style="width: 10px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Pre-Installation Check'); ?></td>	<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 1'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 2'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-on"> <?php echo t('Step 3'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Finish'); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Pre-Installation Check",
+       ); ?></td>	<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 1",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 2",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-on"> <?php echo t(
+           "Step 3",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Finish",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
 			    <td style="width: 10px">&nbsp;</td>
 			</tr>
 		    </table>
 
 		</div>
 
-		<?php
-		if ( isset($error) ) {
-		?>
+		<?php if (isset($error)) { ?>
 
 		<div id="mainerror">
 		    <div class="error_box">
-			<div class="error_headline"><?php echo t('Sorry, an error has occurred') . ':'; ?></div>
+			<div class="error_headline"><?php echo t("Sorry, an error has occurred") .
+       ":"; ?></div>
 			<div class="error_msg"><?php echo $error; ?></div>&nbsp;
 		    </div>
 		</div>
 
-		<?php
-		}
-		?>
+		<?php } ?>
 		<form action="install3.php?action=save" method="post" target="_self" style="display: inline;">
 		    <div class="maintext">
 			<table cellpadding="0" cellspacing="0" border="0" width="100%">
 
-			    <tr><td colspan="3" class="mainheader"><?php echo t('Password for Administration'); ?></td></tr>
+			    <tr><td colspan="3" class="mainheader"><?php echo t(
+           "Password for Administration",
+       ); ?></td></tr>
 			    <tr><td colspan="3">&nbsp;</td></tr>
 
 			    <tr>
@@ -147,15 +154,15 @@ header('Content-type: text/html; charset=utf-8');
 				<td>
 				    <table cellpadding="3" cellspacing="0" border="0" width="100%" class="maintests">
 					<tr>
-					    <td><?php echo t('Username'); ?></td>
+					    <td><?php echo t("Username"); ?></td>
 					    <td style="width: 100px"><input type="text" name="username" value="<?php echo $user; ?>" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('Password'); ?></td>
+					    <td><?php echo t("Password"); ?></td>
 					    <td style="width: 100px"><input type="password" name="password" /></td>
 					</tr>
 					<tr>
-					    <td><?php echo t('Retype Password'); ?></td>
+					    <td><?php echo t("Retype Password"); ?></td>
 					    <td style="width: 100px"><input type="password" name="password2" /></td>
 					</tr>
 				    </table>
@@ -171,7 +178,9 @@ header('Content-type: text/html; charset=utf-8');
 			    <tr>
 				<td align="center" style="text-align: center">
 				    <input type="text" name="action" value="save" style="visibility: hidden; display: none" />
-				    <input type="submit" name="submit" class="next" value="<?php echo t('Next'); ?>" />
+				    <input type="submit" name="submit" class="next" value="<?php echo t(
+            "Next",
+        ); ?>" />
 				</td>
 			    </tr>
 

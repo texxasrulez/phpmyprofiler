@@ -15,70 +15,111 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
 define("OPTION_PASSWORD", 3);
 
-class pmp_option {
-	public $Var;
-	public $Child;  // 1 = Text, 2 = Selection, 3 = Password
-	public $Name;
-	public $Description;
-	public $Value;
-	public $Optionlist;
+class option
+{
+    public $Var;
+    public $Child; // 1 = Text, 2 = Selection, 3 = Password
+    public $Name;
+    public $Description;
+    public $Value;
+    public $Optionlist;
 
-	public function option($Var, $Name, $Description, $Value, $Optionlist = '') {
-		$this->Var = $Var;
-		$this->Name = $Name;
-		$this->Description = $Description;
+    public function __construct(
+        $Var,
+        $Name,
+        $Description,
+        $Value,
+        $Optionlist = "",
+    ) {
+        $this->Var = $Var;
+        $this->Name = $Name;
+        $this->Description = $Description;
 
-		if ( isset($_POST[$this->Var]) ) {
-			$this->Value = $_POST[$this->Var];
-		}
-		else {
-			$this->Value = $Value;
-		}
+        if (isset($_POST[$this->Var])) {
+            $this->Value = $_POST[$this->Var];
+        } else {
+            $this->Value = $Value;
+        }
 
-		if ( is_array($Optionlist) ) {
-			$this->Child = 2;
-			$this->Optionlist = $Optionlist;
-		}
-		else if ( $Optionlist == OPTION_PASSWORD ) {
-			$this->Child = 3;
-		}
-		else {
-			$this->Child = 1;
-			unset($this->Optionlist);
-		}
-	}
+        if (is_array($Optionlist)) {
+            $this->Child = 2;
+            $this->Optionlist = $Optionlist;
+        } elseif ($Optionlist == OPTION_PASSWORD) {
+            $this->Child = 3;
+        } else {
+            $this->Child = 1;
+            unset($this->Optionlist);
+        }
+    }
 
-	public function getSkript() {
-		$res  = "// " . html_entity_decode(t($this->Name), ENT_COMPAT, 'UTF-8') . "\n";
-		$res .= "// \n";
+    // Backward compatibility for legacy calls in older PHP versions.
+    public function option($Var, $Name, $Description, $Value, $Optionlist = "")
+    {
+        $this->__construct($Var, $Name, $Description, $Value, $Optionlist);
+    }
 
-		if ( $this->Description !== '' ) {
-			$res .= "// " . html_entity_decode(t($this->Description), ENT_COMPAT, 'UTF-8') . "\n";
-			$res .= "// \n";
-		}
+    public function getSkript()
+    {
+        $varName = (string) $this->Var;
+        if (!preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $varName)) {
+            return "";
+        }
 
-		if ( $this->Child == 2 ) {
-			$res .= "// " . html_entity_decode(t('Possible values:'), ENT_COMPAT, 'UTF-8') . "\n";
-			foreach ( $this->Optionlist as $key => $value ) {
-				$res .= "//    $key => " . html_entity_decode(t($value), ENT_COMPAT, 'UTF-8') . "\n";
-			}
-			$res .= "// \n";
-		}
+        // Keep critical display settings valid even if submitted as empty values.
+        if ($varName == "pmp_theme" && trim((string) $this->Value) === "") {
+            $this->Value = "default";
+        }
+        if ($varName == "pmp_theme_css" && trim((string) $this->Value) === "") {
+            $this->Value = "default.css";
+        }
 
-		if ( is_numeric($this->Value) ) {
-			$res .= '$' . $this->Var . ' = ' . $this->Value . ';' . "\n";
-		}
-		else {
-			$res .= '$' . $this->Var . ' = \'' . addslashes($this->Value) . '\';' . "\n";
-		}
+        $res =
+            "// " .
+            html_entity_decode(t($this->Name), ENT_COMPAT, "UTF-8") .
+            "\n";
+        $res .= "// \n";
 
-		$res .= "\n";
+        if ($this->Description !== "") {
+            $res .=
+                "// " .
+                html_entity_decode(t($this->Description), ENT_COMPAT, "UTF-8") .
+                "\n";
+            $res .= "// \n";
+        }
 
-		return $res;
-	}
+        if ($this->Child == 2) {
+            $res .=
+                "// " .
+                html_entity_decode(t("Possible values:"), ENT_COMPAT, "UTF-8") .
+                "\n";
+            foreach ($this->Optionlist as $key => $value) {
+                $res .=
+                    "//    $key => " .
+                    html_entity_decode(t($value), ENT_COMPAT, "UTF-8") .
+                    "\n";
+            }
+            $res .= "// \n";
+        }
+
+        if (is_numeric($this->Value)) {
+            $res .= '$' . $varName . " = " . $this->Value . ";" . "\n";
+        } else {
+            $res .=
+                '$' .
+                $varName .
+                ' = \'' .
+                addslashes((string) $this->Value) .
+                '\';' .
+                "\n";
+        }
+
+        $res .= "\n";
+
+        return $res;
+    }
 }
 ?>

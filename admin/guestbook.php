@@ -16,87 +16,98 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'admin_guestbook';
+$pmp_module = "admin_guestbook";
 
-require_once('../config.inc.php');
-require_once('../admin/include/functions.php');
-require_once('../include/pmp_Smarty.class.php');
-require_once('../include/smallDVD.class.php');
-require_once('../include/emoticons.php');
+require_once "../config.inc.php";
+require_once "../admin/include/functions.php";
+require_once "../include/pmp_Smarty.class.php";
+require_once "../include/smallDVD.class.php";
+require_once "../include/emoticons.php";
 
 isadmin();
 
-$smarty = new pmp_Smarty;
-$smarty->loadFilter('output', 'trimwhitespace');
-$smarty->compile_dir = '../templates_c';
+$smarty = new pmp_Smarty();
+$smarty->loadFilter("output", "trimwhitespace");
+$smarty->compile_dir = "../templates_c";
+admin_assign_csrf($smarty);
 
-$smarty->assign('header', t('Guestbook'));
-$smarty->assign('header_img', 'guestbook');
-$smarty->assign('session', session_name() . "=" . session_id() );
+$smarty->assign("header", t("Guestbook"));
+$smarty->assign("header_img", "guestbook");
+$smarty->assign("session", "");
 
 dbconnect();
 
-if ( !empty($_GET['id']) ) {
-	switch ($_GET['action']) {
-		case 'delete':
-			$sql = 'DELETE FROM pmp_guestbook WHERE id = ' . mysql_real_escape_string($_GET['id']);
-			$res = dbexec($sql);
-			$smarty->assign('Success', t('Guestbook entry deleted.'));
-			break;
+if (request_int($_GET, "id", 0, 1) > 0) {
+    $guestbook_id = request_int($_GET, "id", 0, 1);
+    switch ($_GET["action"]) {
+        case "delete":
+            admin_require_post_csrf();
+            $sql = "DELETE FROM pmp_guestbook WHERE id = ?";
+            $res = dbexec_prepared($sql, "i", [$guestbook_id]);
+            $smarty->assign("Success", t("Guestbook entry deleted."));
+            break;
 
-		case 'activate':
-			$sql = 'UPDATE pmp_guestbook SET status = 1 WHERE id = ' . mysql_real_escape_string($_GET['id']);
-			$res = dbexec($sql);
-			$smarty->assign('Success', t('Guestbook entry activated.'));
-			break;
+        case "activate":
+            admin_require_post_csrf();
+            $sql = "UPDATE pmp_guestbook SET status = 1 WHERE id = ?";
+            $res = dbexec_prepared($sql, "i", [$guestbook_id]);
+            $smarty->assign("Success", t("Guestbook entry activated."));
+            break;
 
-		case 'comment':
-			$sql = 'UPDATE pmp_guestbook SET comment = \'' . mysql_real_escape_string($_POST['comment'])
-			. '\' WHERE id = ' . mysql_real_escape_string($_GET['id']);
-			$res = dbexec($sql);
-			$smarty->assign('Success', t('Comment changed.'));
-			break;
-	}
+        case "comment":
+            admin_require_post_csrf();
+            $sql = "UPDATE pmp_guestbook SET comment = ? WHERE id = ?";
+            $res = dbexec_prepared($sql, "si", [
+                (string) $_POST["comment"],
+                $guestbook_id,
+            ]);
+            $smarty->assign("Success", t("Comment changed."));
+            break;
+    }
+} elseif (isset($_GET["action"]) && $_GET["action"] == "allactivate") {
+    admin_require_post_csrf();
+    $sql = "UPDATE pmp_guestbook SET status = 1 WHERE status = 0";
+    $res = dbexec($sql);
+    $smarty->assign("Success", t("All Guestbook entries activated."));
 }
-else if ( (isset($_GET['action'])) && ($_GET['action'] == "allactivate") ) {
-	$sql = 'UPDATE pmp_guestbook SET status = 1 WHERE status = 0';
-	$res = dbexec($sql);
-	$smarty->assign('Success', t('All Guestbook entries activated.'));
-}
 
-$sql = 'SELECT * FROM pmp_guestbook WHERE status = 0 ORDER BY id ASC';
+$sql = "SELECT * FROM pmp_guestbook WHERE status = 0 ORDER BY id ASC";
 $res = dbexec($sql);
 
-$pending = array();
+$pending = [];
 
-if ( mysql_num_rows($res) > 0 ) {
-	while ( $row = mysql_fetch_object($res) ) {
-		$row->date = strftime($pmp_dateformat, strtotime($row->date));
-		$row->text = replace_emoticons(nl2br(htmlspecialchars($row->text, ENT_COMPAT, 'UTF-8')));
-		$row->comment = htmlspecialchars($row->comment, ENT_COMPAT, 'UTF-8');
-		$pending[] = $row;
-	}
+if (mysql_num_rows($res) > 0) {
+    while ($row = mysql_fetch_object($res)) {
+        $row->date = strftime($pmp_dateformat, strtotime($row->date));
+        $row->text = replace_emoticons(
+            nl2br(htmlspecialchars($row->text, ENT_COMPAT, "UTF-8")),
+        );
+        $row->comment = htmlspecialchars($row->comment, ENT_COMPAT, "UTF-8");
+        $pending[] = $row;
+    }
 }
-$smarty->assign('pending', $pending);
+$smarty->assign("pending", $pending);
 
-$sql = 'SELECT * FROM pmp_guestbook WHERE status = 1 ORDER BY id DESC';
+$sql = "SELECT * FROM pmp_guestbook WHERE status = 1 ORDER BY id DESC";
 $res = dbexec($sql);
 
-$active = array();
+$active = [];
 
-if ( mysql_num_rows($res) > 0 ) {
-	while ( $row = mysql_fetch_object($res) ) {
-		$row->date = strftime($pmp_dateformat, strtotime($row->date));
-		$row->text = replace_emoticons(nl2br(htmlspecialchars($row->text, ENT_COMPAT, 'UTF-8')));
-		$row->comment = htmlspecialchars($row->comment, ENT_COMPAT, 'UTF-8');
-		$active[] = $row;
-	}
+if (mysql_num_rows($res) > 0) {
+    while ($row = mysql_fetch_object($res)) {
+        $row->date = strftime($pmp_dateformat, strtotime($row->date));
+        $row->text = replace_emoticons(
+            nl2br(htmlspecialchars($row->text, ENT_COMPAT, "UTF-8")),
+        );
+        $row->comment = htmlspecialchars($row->comment, ENT_COMPAT, "UTF-8");
+        $active[] = $row;
+    }
 }
-$smarty->assign('active', $active);
+$smarty->assign("active", $active);
 
-$smarty->display('admin/guestbook.tpl');
+$smarty->display("admin/guestbook.tpl");
 ?>

@@ -16,55 +16,60 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
 // No direct access
-defined('_PMP_REL_PATH') or die('Not allowed! Possible hacking attempt detected!');
+defined("_PMP_REL_PATH") or
+    die("Not allowed! Possible hacking attempt detected!");
 
-$pmp_module = 'news';
+$pmp_module = "news";
 
-$smarty = new pmp_Smarty;
-$smarty->loadFilter('output', 'trimwhitespace');
+$smarty = new pmp_Smarty();
+$smarty->loadFilter("output", "trimwhitespace");
 
 dbconnect();
 
 // Page selected?
-if ( isset($_GET['page']) ) {
-	if ( !is_numeric($_GET['page']) ) {
-		$start = 1;
-	}
-	else {
-		$start = $_GET['page'];
-	}
-}
-else {
-	$start = 1;
+if (isset($_GET["page"])) {
+    if (!is_numeric($_GET["page"])) {
+        $start = 1;
+    } else {
+        $start = $_GET["page"];
+    }
+} else {
+    $start = 1;
 }
 
 // Get News for one page
-$sql = 'SELECT title, date, text FROM pmp_news ORDER BY date DESC LIMIT '
-	. (((int)$start - 1) * $pmp_news_page). ", " . $pmp_news_page;
+$sql =
+    "SELECT title, date, text FROM pmp_news ORDER BY date DESC LIMIT " .
+    ((int) $start - 1) * $pmp_news_page .
+    ", " .
+    $pmp_news_page;
 $res = dbexec($sql);
 
-$news = array();
+$news = [];
 
-if ( mysql_num_rows($res) > 0 ) {
-	while ($row = mysql_fetch_object($res)) {
-		$news[] = $row;
-	}
+if (mysql_num_rows($res) > 0) {
+    while ($row = mysql_fetch_object($res)) {
+        $news[] = $row;
+    }
 }
 
 // Get otal number of news
-$query = 'SELECT COUNT(id) AS num FROM pmp_news';
+$query = "SELECT COUNT(id) AS num FROM pmp_news";
 $result = dbexec($query);
-$count = mysql_result($result, 0, 'num');
+$count = mysql_result($result, 0, "num");
 
 dbclose();
 
-$smarty->assign('news', $news);
-$smarty->assign('count', $count);
-$smarty->assign('page', (int)$start);
-$smarty->assign('pages', (int)($count / $pmp_news_page + ((($count % $pmp_news_page)==0)? 0 : 1)));
+$smarty->assign("news", $news);
+$smarty->assign("count", $count);
+$smarty->assign("page", (int) $start);
+$smarty->assign(
+    "pages",
+    (int) ($count / $pmp_news_page + ($count % $pmp_news_page == 0 ? 0 : 1)),
+);
 
-$smarty->display('news.tpl');
+$smarty->display("news.tpl");
 ?>

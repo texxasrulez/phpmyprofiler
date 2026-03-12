@@ -228,17 +228,7 @@ if (!defined('MBTTF_DIR')) {
 // Check minimum PHP version
 //
 function CheckPHPVersion($aMinVersion) {
-    list($majorC, $minorC, $editC) = preg_split('/[\/.-]/', PHP_VERSION);
-    list($majorR, $minorR, $editR) = preg_split('/[\/.-]/', $aMinVersion);
-
-    if ($majorC != $majorR) return false;
-    if ($majorC < $majorR) return false;
-    // same major - check minor
-    if ($minorC > $minorR) return true;
-    if ($minorC < $minorR) return false;
-    // and same minor
-    if ($editC  >= $editR)  return true;
-    return true;
+    return version_compare(PHP_VERSION, $aMinVersion, '>=');
 }
 
 //
@@ -1363,8 +1353,7 @@ class Graph {
         }
 
         // Now reconstruct any user URL argument
-        reset($_GET);
-        while( list($key,$value) = each($_GET) ) {
+        foreach ($_GET as $key => $value) {
             if( is_array($value) ) {
                 foreach ( $value as $k => $v ) {
                     $urlarg .= '&amp;'.$key.'%5B'.$k.'%5D='.urlencode($v);
@@ -1378,8 +1367,7 @@ class Graph {
         // It's not ideal to convert POST argument to GET arguments
         // but there is little else we can do. One idea for the
         // future might be recreate the POST header in case.
-        reset($_POST);
-        while( list($key,$value) = each($_POST) ) {
+        foreach ($_POST as $key => $value) {
             if( is_array($value) ) {
                 foreach ( $value as $k => $v ) {
                     $urlarg .= '&amp;'.$key.'%5B'.$k.'%5D='.urlencode($v);
@@ -1489,6 +1477,9 @@ class Graph {
         else {
             $txts = $this->texts;
         }
+        if( !is_array($txts) ) {
+            return null;
+        }
         $n = count($txts);
         $min=null;
         $max=null;
@@ -1517,6 +1508,9 @@ class Graph {
         }
         else {
             $txts = $this->texts;
+        }
+        if( !is_array($txts) ) {
+            return null;
         }
         $n = count($txts);
         $min=null;
@@ -3018,6 +3012,9 @@ class Graph {
 
     // Get Y min and max values for added lines
     function GetLinesYMinMax( $aLines ) {
+        if( !is_array($aLines) ) {
+            return false;
+        }
         $n = count($aLines);
         if( $n == 0 ) return false;
         $min = $aLines[0]->scaleposition ;
@@ -3036,6 +3033,9 @@ class Graph {
 
     // Get X min and max values for added lines
     function GetLinesXMinMax( $aLines ) {
+        if( !is_array($aLines) ) {
+            return false;
+        }
         $n = count($aLines);
         if( $n == 0 ) return false ;
         $min = $aLines[0]->scaleposition ;
@@ -3054,6 +3054,9 @@ class Graph {
 
     // Get min and max values for all included plots
     function GetPlotsYMinMax($aPlots) {
+        if( !is_array($aPlots) || count($aPlots) == 0 ) {
+            JpGraphError::RaiseL(25044);
+        }
         $n = count($aPlots);
         $i=0;
         do {
@@ -4490,6 +4493,16 @@ class LinearTicks extends Ticks {
         }
         else {
             $precision = $this->precision;
+        }
+        $precision = (int)$precision;
+        if( $precision < 0 ) {
+            $precision = 0;
+        }
+        elseif( $precision > 14 ) {
+            $precision = 14;
+        }
+        if( !is_numeric($aVal) ) {
+            $aVal = 0;
         }
 
         if( $this->label_formfunc != '' ) {

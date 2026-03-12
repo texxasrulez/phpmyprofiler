@@ -15,31 +15,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'install';
+$pmp_module = "install";
 
-require_once('../config.inc.php');
-require_once('../include/functions.php');
+require_once "../config.inc.php";
+require_once "../include/functions.php";
 
-function showmsg($type, $msg) {
+function showmsg($type, $msg)
+{
     echo '<tr><td width="40">';
 
-    if ( $type == "Error" )
-	echo '<img src="images/messagebox_error.jpg" border="0" alt="" />';
-    else if ( $type == "Warning" )
-	    echo '<img src="images/messagebox_warning.jpg" border="0" alt="" />';
-	else if ( $type == "Info" )
-		echo '<img src="images/messagebox_info.jpg" border="0" alt="" />';
-	    else
-		echo '<img src="images/messagebox_success.jpg" border="0" alt="" />';
+    if ($type == "Error") {
+        echo '<img src="images/messagebox_error.jpg" border="0" alt="" />';
+    } elseif ($type == "Warning") {
+        echo '<img src="images/messagebox_warning.jpg" border="0" alt="" />';
+    } elseif ($type == "Info") {
+        echo '<img src="images/messagebox_info.jpg" border="0" alt="" />';
+    } else {
+        echo '<img src="images/messagebox_success.jpg" border="0" alt="" />';
+    }
 
-    echo '</td><td>' . $msg . '</td></tr>';
+    echo "</td><td>" . $msg . "</td></tr>";
 }
 
-header('Content-type: text/html; charset=utf-8');
+header("Content-type: text/html; charset=utf-8");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -77,11 +79,21 @@ header('Content-type: text/html; charset=utf-8');
 
 			<tr style="height: 30px">
 			    <td style="width: 10px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Pre-Installation Check'); ?></td>	<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 1'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-on"> <?php echo t('Step 2'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Step 3'); ?></td>					<td style="width: 3px">&nbsp;</td>
-			    <td class="step-off"><?php echo t('Finish'); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Pre-Installation Check",
+       ); ?></td>	<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 1",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-on"> <?php echo t(
+           "Step 2",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Step 3",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
+			    <td class="step-off"><?php echo t(
+           "Finish",
+       ); ?></td>					<td style="width: 3px">&nbsp;</td>
 			    <td style="width: 10px">&nbsp;</td>
 			</tr>
 		    </table>
@@ -91,7 +103,9 @@ header('Content-type: text/html; charset=utf-8');
 		<div class="maintext">
 
 		    <table cellpadding="0" cellspacing="0" border="0" width="100%">
-			<tr><td colspan="3" class="mainheader"><?php echo t('Create phpMyProfiler Database'); ?></td></tr>
+			<tr><td colspan="3" class="mainheader"><?php echo t(
+       "Create phpMyProfiler Database",
+   ); ?></td></tr>
 			<tr><td colspan="3">&nbsp;</td></tr>
 
 			<tr>
@@ -99,72 +113,80 @@ header('Content-type: text/html; charset=utf-8');
 			    <td>
 				<table cellpadding="3" cellspacing="0" border="0" width="100%" class="maintests">
 <?php
-				    // Check Connection to Database
-				    if ( !@mysql_connect($pmp_sqlhost, $pmp_sqluser, $pmp_sqlpass) ) {
-					showmsg('Error', t('Unable to connect to database.'));
-					$failed = TRUE;
-				    }
-				    else {
-					showmsg('Success', t('Connection to database established.'));
-					// Check Database exist
-					if ( !mysql_select_db($pmp_sqldatabase) ) {
-					    showmsg('Warning', t("Can't select database. Trying to create..."));
+// Check Connection to Database
+if (!@mysql_connect($pmp_sqlhost, $pmp_sqluser, $pmp_sqlpass)) {
+    showmsg("Error", t("Unable to connect to database."));
+    $failed = true;
+} else {
+    showmsg("Success", t("Connection to database established."));
+    // Check Database exist
+    if (!mysql_select_db($pmp_sqldatabase)) {
+        showmsg("Warning", t("Can't select database. Trying to create..."));
 
-					    if ( !mysql_query("CREATE DATABASE $pmp_sqldatabase DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci") ) {
-						showmsg('Error', t("Can't create database."));
-						$failed = TRUE;
-					    }
-					    else {
-						showmsg('Success', t('Database created.'));
-						mysql_select_db($pmp_sqldatabase);
-					    }
-					}
-					else {
-					    showmsg('Success', t('Connected to existing database.'));
-					}
+        if (
+            !mysql_query(
+                "CREATE DATABASE $pmp_sqldatabase DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci",
+            )
+        ) {
+            showmsg("Error", t("Can't create database."));
+            $failed = true;
+        } else {
+            showmsg("Success", t("Database created."));
+            mysql_select_db($pmp_sqldatabase);
+        }
+    } else {
+        showmsg("Success", t("Connected to existing database."));
+    }
 
+    // Start creating Tables
+    if (!isset($failed)) {
+        showmsg("Info", t("Start Creating tables."));
 
-					// Start creating Tables
-					if ( !isset($failed) ) {
-					    showmsg('Info', t('Start Creating tables.'));
+        $query = file("sql/phpmyprofiler.sql");
+        $query = array_map("trim", $query);
 
-					    $query = file("sql/phpmyprofiler.sql");
-					    $query = array_map("trim", $query);
+        foreach ($query as $index => $line) {
+            if (
+                strpos($line, "#") === 0 ||
+                substr($line, 0, 2) == "--" ||
+                $line == null
+            ) {
+                unset($query[$index]);
+            }
+        }
 
-					    foreach ( $query as $index => $line ) {
-						if ((strpos($line, "#") === 0) || (substr($line, 0, 2) == '--') || $line == NULL)
-						    unset($query[$index]);
-					    }
+        $query = array_values($query);
 
-					    $query = array_values($query);
+        foreach (explode(";", implode(" ", $query)) as $sql) {
+            if (strlen(trim($sql)) > 0) {
+                dbexec($sql);
+            }
+        }
 
-					    foreach ( explode(';', implode(' ',$query)) as $sql ) {
-						if ( strlen(trim($sql)) > 0 )
-						    dbexec($sql);
-					    }
+        showmsg("Success", t("Tables created successfully."));
+        showmsg("Info", t("Starting importing data"));
 
-					    showmsg('Success', t('Tables created successfully.'));
-					    showmsg('Info', t('Starting importing data'));
+        $query = file("sql/phpmyprofiler_data.sql");
+        $query = array_map("trim", $query);
 
-					    $query = file("sql/phpmyprofiler_data.sql");
-					    $query = array_map("trim", $query);
+        foreach ($query as $index => $line) {
+            if (strpos($line, "INSERT") === false) {
+                unset($query[$index]);
+            }
+        }
+        foreach ($query as $sql) {
+            dbexec($sql);
+        }
 
-					    foreach ( $query as $index => $line ) {
-						if ( strpos($line, "INSERT") === FALSE )
-						    unset($query[$index]);
-					    }
-					    foreach ( $query as $sql )
-						dbexec($sql);
+        showmsg("Success", t("Data imported successfully."));
+        showmsg("Success", t("Installation finished"));
+    }
+}
 
-					    showmsg('Success', t('Data imported successfully.'));
-					    showmsg('Success', t('Installation finished'));
-					}
-				    }
-
-				    if ( isset($failed) ) {
-					showmsg('Error', t('Installation halted, check your Configuration.'));
-				    }
-				    ?>
+if (isset($failed)) {
+    showmsg("Error", t("Installation halted, check your Configuration."));
+}
+?>
 				</table>
 			    </td>
 			</tr>
@@ -178,22 +200,19 @@ header('Content-type: text/html; charset=utf-8');
 		    <table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr>
 			    <td align="center" style="text-align: center">
-<?php
-if ( isset($failed)) {
-    ?>
+<?php if (isset($failed)) { ?>
 				<form action="install1.php" method="post" target="_self" style="display: inline;" accept-charset="utf-8">
-				    <input type="submit" name="submit" class="next" value="<?php echo t('Back'); ?>" />
+				    <input type="submit" name="submit" class="next" value="<?php echo t(
+            "Back",
+        ); ?>" />
 				</form>
-<?php
-}
-else {
-    ?>
+<?php } else { ?>
 				<form action="install3.php" method="post" target="_self" style="display: inline;">
-				    <input type="submit" name="submit" class="next" value="<?php echo t('Next'); ?>" />
+				    <input type="submit" name="submit" class="next" value="<?php echo t(
+            "Next",
+        ); ?>" />
 				</form>
-				<?php
-				}
-				?>
+				<?php } ?>
 			    </td>
 			</tr>
 		    </table>

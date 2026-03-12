@@ -85,6 +85,7 @@ class TP_yyStackEntry
 
 
 #line 13 "smarty_internal_templateparser.y"
+#[\AllowDynamicProperties]
 class Smarty_Internal_Templateparser#line 80 "smarty_internal_templateparser.php"
 {
 #line 15 "smarty_internal_templateparser.y"

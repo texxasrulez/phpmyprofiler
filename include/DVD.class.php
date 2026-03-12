@@ -15,303 +15,491 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-require_once('include/smallDVD.class.php');
+require_once "include/smallDVD.class.php";
 
-class DVD extends smallDVD {
-	function DVD($id) {
-		global $pmp_dir_cast, $pmp_thousands_sep, $pmp_dec_point, $pmp_extern_reviews, $pmp_dateformat;
+class DVD extends smallDVD
+{
+    function __construct($id = null)
+    {
+        $this->DVD($id);
+    }
 
-		if ( isset($id) ) {
-			$this->smallDVD($id);
+    function DVD($id)
+    {
+        global $pmp_dir_cast,
+            $pmp_thousands_sep,
+            $pmp_dec_point,
+            $pmp_extern_reviews,
+            $pmp_dateformat;
 
-			// Features
-			$sql = 'SELECT * FROM pmp_features WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				$row = mysql_fetch_object($result);
-				$this->Scenes = $row->sceneaccess;
-				$this->Comment = $row->comment;
-				$this->Trailer = $row->trailer;
-				$this->BonusTrailer = $row->bonustrailer;
-				$this->PhotoGallery = $row->gallery;
-				$this->Deleted = $row->deleted;
-				$this->MakingOf = $row->makingof;
-				$this->Notes = $row->prodnotes;
-				$this->Game = $row->game;
-				$this->DVDrom = $row->dvdrom;
-				$this->Multiangle = $row->multiangle;
-				$this->Musicvideos = $row->musicvideos;
-				$this->Interviews = $row->interviews;
-				$this->Storyboard = $row->storyboard;
-				$this->Outtakes = $row->outtakes;
-				$this->ClosedCaptioned = $row->closedcaptioned;
-				$this->THX = $row->thx;
-				$this->PictureInPicture = $row->pip;
-				$this->BDLive = $row->bdlive;
-				$this->DigitalCopy = $row->digitalcopy;
-				$this->Other = htmlspecialchars($row->other, ENT_COMPAT, 'UTF-8');
-			}
+        // Defaults for optional tables/fields to avoid undefined-property warnings on PHP 8+.
+        $this->Regions = [];
+        $this->Origins = [];
+        $this->Genres = [];
+        $this->Studios = [];
+        $this->MediaCompanies = [];
+        $this->Subtitles = [];
+        $this->Audio = [];
+        $this->Discs = [];
+        $this->Events = [];
+        $this->Credits = [];
+        $this->Cast = [];
+        $this->Tags = [];
+        $this->Reviews = [];
+        $this->Awards = [];
+        $this->Videos = [];
+        $this->MyLinks = [];
+        $this->extReviews = [];
 
-			// Format
-			$sql = 'SELECT * FROM pmp_format WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				$row = mysql_fetch_object($result);
-				$this->Ratio = $row->ratio;
-				$this->Video = $row->video;
-				$this->Color = $row->clrcolor;
-				$this->BlackWhite = $row->clrblackandwhite;
-				$this->Colorized = $row->clrcolorized;
-				$this->Mixed = $row->clrmixed;
-				$this->PanAndScan = $row->panandscan;
-				$this->FullFrame = $row->fullframe;
-				$this->Widescreen = $row->widescreen;
-				$this->Anamorph = $row->anamorph;
-				$this->DualSide = $row->dualside;
-				$this->DualLayer = $row->duallayer;
-				$this->Dim2D = $row->dim2d;
-				$this->Anaglyph = $row->anaglyph;
-				$this->Bluray3D = $row->bluray3d;
-			}
+        $this->Scenes = "0";
+        $this->Comment = "0";
+        $this->Trailer = "0";
+        $this->BonusTrailer = "0";
+        $this->PhotoGallery = "0";
+        $this->Deleted = "0";
+        $this->MakingOf = "0";
+        $this->Notes = "0";
+        $this->Game = "0";
+        $this->DVDrom = "0";
+        $this->Multiangle = "0";
+        $this->Musicvideos = "0";
+        $this->Interviews = "0";
+        $this->Storyboard = "0";
+        $this->Outtakes = "0";
+        $this->ClosedCaptioned = "0";
+        $this->THX = "0";
+        $this->PictureInPicture = "0";
+        $this->BDLive = "0";
+        $this->DigitalCopy = "0";
+        $this->Other = "";
 
-			// Regioncode
-			$sql = 'SELECT region FROM pmp_regions WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Regions[] = $row->region;
-				}
-			}
+        $this->Ratio = "";
+        $this->Video = "0";
+        $this->Color = "0";
+        $this->BlackWhite = "0";
+        $this->Colorized = "0";
+        $this->Mixed = "0";
+        $this->PanAndScan = "0";
+        $this->FullFrame = "0";
+        $this->Widescreen = "0";
+        $this->Anamorph = "0";
+        $this->DualSide = "0";
+        $this->DualLayer = "0";
+        $this->Dim2D = "0";
+        $this->Anaglyph = "0";
+        $this->Bluray3D = "0";
+        $this->dd = false;
+        $this->dts = false;
 
-			// Countries of origin
-			$sql = 'SELECT country FROM pmp_countries_of_origin WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Origins[] = $row->country;
-				}
-			}
+        if (isset($id)) {
+            $this->smallDVD($id);
 
-			// Genres
-			$sql = 'SELECT genre FROM pmp_genres WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Genres[] = $row->genre;
-				}
-			}
+            // Features
+            $sql =
+                'SELECT * FROM pmp_features WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                $row = mysql_fetch_object($result);
+                $this->Scenes = $row->sceneaccess;
+                $this->Comment = $row->comment;
+                $this->Trailer = $row->trailer;
+                $this->BonusTrailer = $row->bonustrailer;
+                $this->PhotoGallery = $row->gallery;
+                $this->Deleted = $row->deleted;
+                $this->MakingOf = $row->makingof;
+                $this->Notes = $row->prodnotes;
+                $this->Game = $row->game;
+                $this->DVDrom = $row->dvdrom;
+                $this->Multiangle = $row->multiangle;
+                $this->Musicvideos = $row->musicvideos;
+                $this->Interviews = $row->interviews;
+                $this->Storyboard = $row->storyboard;
+                $this->Outtakes = $row->outtakes;
+                $this->ClosedCaptioned = $row->closedcaptioned;
+                $this->THX = $row->thx;
+                $this->PictureInPicture = $row->pip;
+                $this->BDLive = $row->bdlive;
+                $this->DigitalCopy = $row->digitalcopy;
+                $this->Other = htmlspecialchars(
+                    $row->other,
+                    ENT_COMPAT,
+                    "UTF-8",
+                );
+            }
 
-			// Studios
-			$sql = 'SELECT studio FROM pmp_studios WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Studios[] = htmlspecialchars($row->studio, ENT_COMPAT, 'UTF-8');
-				}
-			}
+            // Format
+            $sql =
+                'SELECT * FROM pmp_format WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                $row = mysql_fetch_object($result);
+                $this->Ratio = $row->ratio;
+                $this->Video = $row->video;
+                $this->Color = $row->clrcolor;
+                $this->BlackWhite = $row->clrblackandwhite;
+                $this->Colorized = $row->clrcolorized;
+                $this->Mixed = $row->clrmixed;
+                $this->PanAndScan = $row->panandscan;
+                $this->FullFrame = $row->fullframe;
+                $this->Widescreen = $row->widescreen;
+                $this->Anamorph = $row->anamorph;
+                $this->DualSide = $row->dualside;
+                $this->DualLayer = $row->duallayer;
+                $this->Dim2D = $row->dim2d;
+                $this->Anaglyph = $row->anaglyph;
+                $this->Bluray3D = $row->bluray3d;
+            }
 
-			// Media Companies
-			$sql = 'SELECT company FROM pmp_media_companies WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->MediaCompanies[] = htmlspecialchars($row->company, ENT_COMPAT, 'UTF-8');
-				}
-			}
+            // Regioncode
+            $sql =
+                'SELECT region FROM pmp_regions WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Regions[] = $row->region;
+                }
+            }
 
-			// Subtitles
-			$sql = 'SELECT subtitle FROM pmp_subtitles WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Subtitles[] = $row->subtitle;
-				}
-			}
+            // Countries of origin
+            $sql =
+                'SELECT country FROM pmp_countries_of_origin WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Origins[] = $row->country;
+                }
+            }
 
-			// Audio
-			$sql = 'SELECT content, format, channels FROM pmp_audio WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				$this->dd = false;
-				$this->dts = false;
+            // Genres
+            $sql =
+                'SELECT genre FROM pmp_genres WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Genres[] = $row->genre;
+                }
+            }
 
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Audio[] = array('Content' => $row->content, 'Format' => $row->format, 'Channels' => $row->channels);
+            // Studios
+            $sql =
+                'SELECT studio FROM pmp_studios WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Studios[] = htmlspecialchars(
+                        $row->studio,
+                        ENT_COMPAT,
+                        "UTF-8",
+                    );
+                }
+            }
 
-					if ( preg_match('/\bDolby Digital\b/i', $row->format) ) {
-						$this->dd = true;
-					}
-					if ( preg_match('/\bDTS\b/i', $row->format) ) {
-						$this->dts = true;
-					}
-				}
-			}
+            // Media Companies
+            $sql =
+                'SELECT company FROM pmp_media_companies WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->MediaCompanies[] = htmlspecialchars(
+                        $row->company,
+                        ENT_COMPAT,
+                        "UTF-8",
+                    );
+                }
+            }
 
-			// Discs
-			$sql = 'SELECT * FROM pmp_discs WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$row->descsidea = htmlspecialchars($row->descsidea, ENT_COMPAT, 'UTF-8'); 
-					$row->descsideb = htmlspecialchars($row->descsideb, ENT_COMPAT, 'UTF-8'); 
-					$this->Discs[] = $row;
-				}
-			}
+            // Subtitles
+            $sql =
+                'SELECT subtitle FROM pmp_subtitles WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Subtitles[] = $row->subtitle;
+                }
+            }
 
-			// Events
-			$sql  = 'SELECT *, DATE_FORMAT(timestamp, \'%H:%i:%s\') AS time, DATE_FORMAT(timestamp, \'' . $pmp_dateformat . '\') AS date ';
-			$sql .= 'FROM pmp_events LEFT JOIN pmp_users ON pmp_events.user_id = pmp_users.user_id ';
-			$sql .= 'WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Events[] = $row;
-				}
-			}
+            // Audio
+            $sql =
+                'SELECT content, format, channels FROM pmp_audio WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                $this->dd = false;
+                $this->dts = false;
 
-			// Credits
-			$sql  = 'SELECT firstname, middlename, lastname, fullname as full, birthyear, type, subtype, creditedas
-				FROM pmp_common_credits, pmp_credits WHERE pmp_credits.id = \'' . mysql_real_escape_string($this->id)
-				. '\' AND pmp_credits.credit_id = pmp_common_credits.credit_id ORDER BY sortorder';
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Audio[] = [
+                        "Content" => $row->content,
+                        "Format" => $row->format,
+                        "Channels" => $row->channels,
+                    ];
 
-			$result = dbexec($sql);
-			if( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$row->full_encoded = rawurlencode($row->full);
-					$row->picname = getHeadshot($row->full, $row->birthyear, $row->firstname, $row->middlename, $row->lastname);
-					$row->pic = !empty($row->picname);
-					$this->Credits[] = $row;
-				}
-			}
+                    if (preg_match("/\bDolby Digital\b/i", $row->format)) {
+                        $this->dd = true;
+                    }
+                    if (preg_match("/\bDTS\b/i", $row->format)) {
+                        $this->dts = true;
+                    }
+                }
+            }
 
-			// Cast
-			$sql  = 'SELECT firstname, middlename, lastname, fullname as full, birthyear, role, uncredited, voice, creditedas
-				FROM pmp_common_actors, pmp_actors WHERE pmp_actors.id = \'' . mysql_real_escape_string($this->id) . '\'
+            // Discs
+            $sql =
+                'SELECT * FROM pmp_discs WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $row->descsidea = htmlspecialchars(
+                        $row->descsidea,
+                        ENT_COMPAT,
+                        "UTF-8",
+                    );
+                    $row->descsideb = htmlspecialchars(
+                        $row->descsideb,
+                        ENT_COMPAT,
+                        "UTF-8",
+                    );
+                    $this->Discs[] = $row;
+                }
+            }
+
+            // Events
+            $sql =
+                'SELECT *, DATE_FORMAT(timestamp, \'%H:%i:%s\') AS time, DATE_FORMAT(timestamp, \'' .
+                $pmp_dateformat .
+                '\') AS date ';
+            $sql .=
+                "FROM pmp_events LEFT JOIN pmp_users ON pmp_events.user_id = pmp_users.user_id ";
+            $sql .=
+                'WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Events[] = $row;
+                }
+            }
+
+            // Credits
+            $sql =
+                'SELECT firstname, middlename, lastname, fullname as full, birthyear, type, subtype, creditedas
+				FROM pmp_common_credits, pmp_credits WHERE pmp_credits.id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\' AND pmp_credits.credit_id = pmp_common_credits.credit_id ORDER BY sortorder';
+
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $row->full_encoded = rawurlencode($row->full);
+                    $row->picname = getHeadshot(
+                        $row->full,
+                        $row->birthyear,
+                        $row->firstname,
+                        $row->middlename,
+                        $row->lastname,
+                    );
+                    $row->pic = !empty($row->picname);
+                    $this->Credits[] = $row;
+                }
+            }
+
+            // Cast
+            $sql =
+                'SELECT firstname, middlename, lastname, fullname as full, birthyear, role, uncredited, voice, creditedas
+				FROM pmp_common_actors, pmp_actors WHERE pmp_actors.id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'
 				AND pmp_actors.actor_id = pmp_common_actors.actor_id ORDER BY sortorder';
 
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$row->full_encoded = rawurlencode($row->full);
-					$row->picname = getHeadshot($row->full, $row->birthyear, $row->firstname, $row->middlename, $row->lastname);
-					$row->pic = !empty($row->picname);
-					$this->Cast[] = $row;
-				}
-			}
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $row->full_encoded = rawurlencode($row->full);
+                    $row->picname = getHeadshot(
+                        $row->full,
+                        $row->birthyear,
+                        $row->firstname,
+                        $row->middlename,
+                        $row->lastname,
+                    );
+                    $row->pic = !empty($row->picname);
+                    $this->Cast[] = $row;
+                }
+            }
 
-			// Tags
-			$sql = 'SELECT name, fullname FROM pmp_tags WHERE id = \'' . mysql_real_escape_string($this->id) . '\'';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Tags[] = array("fullname" => $row->fullname, "name" => $row->name);
-				}
-			}
+            // Tags
+            $sql =
+                'SELECT name, fullname FROM pmp_tags WHERE id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\'';
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Tags[] = [
+                        "fullname" => $row->fullname,
+                        "name" => $row->name,
+                    ];
+                }
+            }
 
-			// Reviews
-			$sql = 'SELECT name, title, email, date_format(date, \'' . $pmp_dateformat . '\') AS date, text, vote
-				FROM pmp_reviews WHERE film_id = \'' . mysql_real_escape_string($this->id) . '\' and status = 1
+            // Reviews
+            $sql =
+                'SELECT name, title, email, date_format(date, \'' .
+                $pmp_dateformat .
+                '\') AS date, text, vote
+				FROM pmp_reviews WHERE film_id = \'' .
+                mysql_real_escape_string($this->id) .
+                '\' and status = 1
 				ORDER BY date DESC';
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Reviews[] = array("Name" => $row->name, "Title" => $row->title, "eMail" => $row->email,
-						"Text" => $row->text, "Vote" => $row->vote, "Date" => $row->date);
-				}
-			}
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Reviews[] = [
+                        "Name" => $row->name,
+                        "Title" => $row->title,
+                        "eMail" => $row->email,
+                        "Text" => $row->text,
+                        "Vote" => $row->vote,
+                        "Date" => $row->date,
+                    ];
+                }
+            }
 
-			// Awards
-			if ( !$this->OriginalTitle ) {
-				$sql = 'SELECT award, awardyear, category, winner, nominee FROM pmp_awards WHERE LOWER(title) = LOWER(\''
-					. mysql_real_escape_string(html_entity_decode($this->Title, ENT_QUOTES, 'UTF-8')) . '\') AND awardyear BETWEEN \''
-					. mysql_real_escape_string($this->Year) . '\' AND \''  . mysql_real_escape_string($this->Year) . '\'+1 ORDER BY award, winner DESC';
-			}
-			else {
-				$sql = 'SELECT award, awardyear, category, winner, nominee FROM pmp_awards WHERE LOWER(title) = LOWER(\''
-					. mysql_real_escape_string(html_entity_decode($this->OriginalTitle, ENT_QUOTES, 'UTF-8')) . '\') AND awardyear BETWEEN \''
-					. mysql_real_escape_string($this->Year) . '\' AND \''  . mysql_real_escape_string($this->Year) . '\'+1 ORDER BY award, winner DESC';
-			}
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Awards[] = $row;
-				}
-			}
+            // Awards
+            if (!$this->OriginalTitle) {
+                $sql =
+                    'SELECT award, awardyear, category, winner, nominee FROM pmp_awards WHERE LOWER(title) = LOWER(\'' .
+                    mysql_real_escape_string(
+                        html_entity_decode($this->Title, ENT_QUOTES, "UTF-8"),
+                    ) .
+                    '\') AND awardyear BETWEEN \'' .
+                    mysql_real_escape_string($this->Year) .
+                    '\' AND \'' .
+                    mysql_real_escape_string($this->Year) .
+                    '\'+1 ORDER BY award, winner DESC';
+            } else {
+                $sql =
+                    'SELECT award, awardyear, category, winner, nominee FROM pmp_awards WHERE LOWER(title) = LOWER(\'' .
+                    mysql_real_escape_string(
+                        html_entity_decode(
+                            $this->OriginalTitle,
+                            ENT_QUOTES,
+                            "UTF-8",
+                        ),
+                    ) .
+                    '\') AND awardyear BETWEEN \'' .
+                    mysql_real_escape_string($this->Year) .
+                    '\' AND \'' .
+                    mysql_real_escape_string($this->Year) .
+                    '\'+1 ORDER BY award, winner DESC';
+            }
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Awards[] = $row;
+                }
+            }
 
-			// Videos
-			$sql = "SELECT type, ext_id, title FROM pmp_videos WHERE id = '" . mysql_real_escape_string($this->id) . "'";
-			$result = dbexec($sql);
-			if ( @mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->Videos[] = $row;
-				}
-			}
+            // Videos
+            $sql =
+                "SELECT type, ext_id, title FROM pmp_videos WHERE id = '" .
+                mysql_real_escape_string($this->id) .
+                "'";
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->Videos[] = $row;
+                }
+            }
 
-			// Get external reviews
-			#$sql = "SELECT DISTINCT (title) FROM pmp_reviews_connect WHERE id = '" . mysql_real_escape_string($this->id) . "'";
-			#$result = dbexec($sql);
-			$i = 0;
-			#while ( $tmp = mysql_fetch_object($result) ) {
-				$this->extReviews[$i] = new stdClass();
-				#$this->extReviews[$i]->reviewTitle = $tmp->title;
-				$sql = "SELECT * FROM pmp_reviews_connect LEFT JOIN pmp_reviews_external ON review_id = pmp_reviews_external.id WHERE pmp_reviews_connect.id = '" . mysql_real_escape_string($this->id) . "'";
-				#if (isset($tmp->title)) {
-				#	$sql .= " AND title = '" . mysql_real_escape_string($tmp->title) . "'";
-				#}
-				$result2 = dbexec($sql);
-				while ( $row = mysql_fetch_object($result2) ) {
-					if ( $row->type == 'imdb' ) {
-						$this->extReviews[$i]->imdbRating = $row->review;
-						$this->extReviews[$i]->imdbVotes = $row->votes;
-						$this->extReviews[$i]->imdbTop250 = $row->top250;
-						$this->extReviews[$i]->imdbBottom100 = $row->bottom100;
-						if (!isset($this->imdbID)) {
-							$this->imdbID = $row->ext_id;
-						}
-					}
-					if ( $row->type == 'ofdb' ) {
-						$this->extReviews[$i]->ofdbRating = $row->review;
-						$this->extReviews[$i]->ofdbVotes = $row->votes;
-						$this->extReviews[$i]->ofdbTop250 = $row->top250;
-						$this->extReviews[$i]->ofdbBottom100 = $row->bottom100;
-						if (!isset($this->ofdbID)) {
-							$this->ofdbID = $row->ext_id;
-						}
-					}
-					if ( $row->type == 'rotten_c' ) {
-						$this->extReviews[$i]->rotcRating = $row->review;
-						$this->extReviews[$i]->rotcVotes = $row->votes;
-						if (!isset($this->rottenID)) {
-							$this->rottenID = $row->ext_id;
-						}
-					}
-					if ( $row->type == 'rotten_u' ) {
-						$this->extReviews[$i]->rotuRating = $row->review;
-						$this->extReviews[$i]->rotuVotes = $row->votes;
-					}
-				}
-				$i++;
-			#}
-			if ($i > 0) {
-				$this->reviewTitleNum = $i;
-			}
+            // Get external reviews
+            #$sql = "SELECT DISTINCT (title) FROM pmp_reviews_connect WHERE id = '" . mysql_real_escape_string($this->id) . "'";
+            #$result = dbexec($sql);
+            $i = 0;
+            #while ( $tmp = mysql_fetch_object($result) ) {
+            $this->extReviews[$i] = new stdClass();
+            #$this->extReviews[$i]->reviewTitle = $tmp->title;
+            $sql =
+                "SELECT * FROM pmp_reviews_connect LEFT JOIN pmp_reviews_external ON review_id = pmp_reviews_external.id WHERE pmp_reviews_connect.id = '" .
+                mysql_real_escape_string($this->id) .
+                "'";
+            #if (isset($tmp->title)) {
+            #	$sql .= " AND title = '" . mysql_real_escape_string($tmp->title) . "'";
+            #}
+            $result2 = dbexec($sql);
+            while ($row = mysql_fetch_object($result2)) {
+                if ($row->type == "imdb") {
+                    $this->extReviews[$i]->imdbRating = $row->review;
+                    $this->extReviews[$i]->imdbVotes = $row->votes;
+                    $this->extReviews[$i]->imdbTop250 = $row->top250;
+                    $this->extReviews[$i]->imdbBottom100 = $row->bottom100;
+                    if (!isset($this->imdbID)) {
+                        $this->imdbID = $row->ext_id;
+                    }
+                }
+                if ($row->type == "ofdb") {
+                    $this->extReviews[$i]->ofdbRating = $row->review;
+                    $this->extReviews[$i]->ofdbVotes = $row->votes;
+                    $this->extReviews[$i]->ofdbTop250 = $row->top250;
+                    $this->extReviews[$i]->ofdbBottom100 = $row->bottom100;
+                    if (!isset($this->ofdbID)) {
+                        $this->ofdbID = $row->ext_id;
+                    }
+                }
+                if ($row->type == "rotten_c") {
+                    $this->extReviews[$i]->rotcRating = $row->review;
+                    $this->extReviews[$i]->rotcVotes = $row->votes;
+                    if (!isset($this->rottenID)) {
+                        $this->rottenID = $row->ext_id;
+                    }
+                }
+                if ($row->type == "rotten_u") {
+                    $this->extReviews[$i]->rotuRating = $row->review;
+                    $this->extReviews[$i]->rotuVotes = $row->votes;
+                }
+            }
+            $i++;
+            #}
+            if ($i > 0) {
+                $this->reviewTitleNum = $i;
+            }
 
-			unset($this->_db);
+            unset($this->_db);
 
-			// My Links
-			$sql = "SELECT * FROM pmp_mylinks WHERE id = '" . mysql_real_escape_string($this->id) . "' ORDER BY category LIMIT 0, 300";
-			$result = dbexec($sql);
-			if (@mysql_num_rows($result) > 0 ) {
-				while ( $row = mysql_fetch_object($result) ) {
-					$this->MyLinks[] = $row;
-				}
-			}
-		}
-		else {
-			return false;
-		}
-	}
+            // My Links
+            $sql =
+                "SELECT * FROM pmp_mylinks WHERE id = '" .
+                mysql_real_escape_string($this->id) .
+                "' ORDER BY category LIMIT 0, 300";
+            $result = dbexec($sql);
+            if (@mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_object($result)) {
+                    $this->MyLinks[] = $row;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
 }
 ?>

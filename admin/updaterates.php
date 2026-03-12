@@ -15,71 +15,82 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'admin_updaterates';
+$pmp_module = "admin_updaterates";
 
-require_once('../config.inc.php');
-require_once('../admin/include/functions.php');
-require_once('../include/pmp_Smarty.class.php');
+require_once "../config.inc.php";
+require_once "../admin/include/functions.php";
+require_once "../include/pmp_Smarty.class.php";
 
 isadmin();
 
-$smarty = new pmp_Smarty;
-$smarty->loadFilter('output', 'trimwhitespace');
-$smarty->compile_dir = '../templates_c';
+$smarty = new pmp_Smarty();
+$smarty->loadFilter("output", "trimwhitespace");
+$smarty->compile_dir = "../templates_c";
+admin_assign_csrf($smarty);
 
-$smarty->assign('header', t('Exchange Rates'));
-$smarty->assign('header_img', 'updaterates');
-$smarty->assign('session', session_name() . "=" . session_id() );
+$smarty->assign("header", t("Exchange Rates"));
+$smarty->assign("header_img", "updaterates");
+$smarty->assign("session", "");
 
 dbconnect();
 
 // Update rates from ECB
-function updateRates() {
-	$xmlrates = getRemoteContent('http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml');
+function updateRates()
+{
+    $xmlrates = getRemoteContent(
+        "http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml",
+    );
 
-	if ( $xmlrates != '' ) {
-		preg_match("/<Cube time='(.*)'>/i", $xmlrates,  $date);
-		preg_match_all("/<Cube currency='(.*)' rate='(.*)'/i", $xmlrates,  $tmp);
-		$rates = array_combine($tmp[1], $tmp[2]);
+    if ($xmlrates != "") {
+        preg_match("/<Cube time='(.*)'>/i", $xmlrates, $date);
+        preg_match_all("/<Cube currency='(.*)' rate='(.*)'/i", $xmlrates, $tmp);
+        $rates = array_combine($tmp[1], $tmp[2]);
 
-		foreach ( $rates as $curr=>$rate ) {
-			dbexec('INSERT INTO pmp_rates (id, rate, date) VALUES (\'' . mysql_real_escape_string($curr) . '\', ' . mysql_real_escape_string($rate) . ', \'' . mysql_real_escape_string($date[1]) . '\')');
-		}
+        foreach ($rates as $curr => $rate) {
+            dbexec(
+                'INSERT INTO pmp_rates (id, rate, date) VALUES (\'' .
+                    mysql_real_escape_string($curr) .
+                    '\', ' .
+                    mysql_real_escape_string($rate) .
+                    ', \'' .
+                    mysql_real_escape_string($date[1]) .
+                    '\')',
+            );
+        }
 
-		return true;
-	}
-	else {
-		return false;
-	}
+        return true;
+    } else {
+        return false;
+    }
 }
 
-if ( (isset($_GET['action'])) && ($_GET['action'] == 'update') ) {
-	dbexec('DELETE FROM pmp_rates');
+if (isset($_GET["action"]) && $_GET["action"] == "update") {
+    admin_require_post_csrf();
+    dbexec("DELETE FROM pmp_rates");
 
-	if ( updateRates() ) {
-		$smarty->assign('Success', t('Rates updated.'));
-	}
-	else {
-		$smarty->assign('Error', t('Rates not updated.'));
-	}
+    if (updateRates()) {
+        $smarty->assign("Success", t("Rates updated."));
+    } else {
+        $smarty->assign("Error", t("Rates not updated."));
+    }
 }
 
-$res = dbexec('SELECT * FROM pmp_rates');
+$res = dbexec("SELECT * FROM pmp_rates");
 
-$rates = array();
+$rates = [];
 
-if ( mysql_num_rows($res) > 0 ) {
-	while ( $row = mysql_fetch_object($res) ) {
-		$rates[] = $row;
-	}
+if (mysql_num_rows($res) > 0) {
+    while ($row = mysql_fetch_object($res)) {
+        $rates[] = $row;
+    }
 }
-$smarty->assign('rates', $rates);
+$smarty->assign("rates", $rates);
 
 dbclose();
 
-$smarty->display('admin/updaterates.tpl');
+$smarty->display("admin/updaterates.tpl");
 ?>

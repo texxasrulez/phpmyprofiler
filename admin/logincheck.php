@@ -15,45 +15,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/
+ */
 
-define('_PMP_REL_PATH', '..');
+define("_PMP_REL_PATH", "..");
 
-$pmp_module = 'admin_login';
+$pmp_module = "admin_login";
 
-require_once('../config.inc.php');
-require_once('../passwd.inc.php');
-require_once('../admin/include/functions.php');
-require_once('../admin/include/password.php');
-require_once('../include/pmp_Smarty.class.php');
-require_once('../include/formkey.class.php');
+require_once "../config.inc.php";
+require_once "../passwd.inc.php";
+require_once "../admin/include/functions.php";
+require_once "../admin/include/password.php";
+require_once "../include/pmp_Smarty.class.php";
+require_once "../include/formkey.class.php";
 
 $formKey = new formKey();
 
 // Check Login (User / Password)
-if ( isset($_POST['login']) ) {
-	$session = session_name() . "=" . session_id();
+if (isset($_POST["login"])) {
+    if (!isset($_POST["form_key"]) || !$formKey->validate()) {
+        //Form key is invalid, show an error
+        header("Location:login.php?error=formkey");
+    } elseif (empty($_POST["user"])) {
+        header("Location:login.php?error=user");
+    } elseif (empty($_POST["passwd"])) {
+        header(
+            "Location:login.php?error=pass&user=" .
+                rawurlencode($_POST["user"]),
+        );
+    } elseif (
+        $_POST["user"] != $pmp_admin ||
+        !password_verify($_POST["passwd"], $pmp_passwd)
+    ) {
+        header("Location:login.php?error=usrpsw");
+    } else {
+        saveLastIP();
+        session_regenerate_id(false);
 
-	if( !isset($_POST['form_key']) || !$formKey->validate() ) {
-		//Form key is invalid, show an error
-		header("Location:login.php?error=formkey&" . $session);
-	}
-	else if ( empty($_POST['user']) ) {
-		header("Location:login.php?error=user&" . $session);
-	}
-	else if ( empty($_POST['passwd']) ) {
-		header("Location:login.php?error=pass&user=" . $_POST['user'] . "&" . $session);
-	}
-	else if ( ($_POST['user'] != $pmp_admin) || !password_verify($_POST['passwd'], $pmp_passwd) ) {
-		header("Location:login.php?error=usrpsw&" . $session);
-	}
-	else {
-		saveLastIP();
-		session_regenerate_id(false);
-		$session = session_name() . "=" . session_id();
-
-		$_SESSION['isadmin'] = true;
-		header("Location:" . $_SESSION['lastside'] .  "?" . $session);
-	}
+        $_SESSION["isadmin"] = true;
+        $target = basename((string) $_SESSION["lastside"]);
+        if ($target === "") {
+            $target = "index.php";
+        }
+        header("Location:" . $target);
+    }
 }
 ?>
