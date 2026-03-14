@@ -20,34 +20,58 @@
 class update
 {
     public $id;
-    public $ExecSQL;
+    public $ExecSQL = [];
     public $Author;
     public $Date;
     public $Description;
+    public $lasterror = false;
+
+    public function __construct($file = null)
+    {
+        if ($file !== null) {
+            $this->update($file);
+        }
+    }
 
     public function update($file)
     {
+        $this->ExecSQL = [];
+
         $tmpcontent = file($file);
+        if ($tmpcontent === false) {
+            return;
+        }
+
         $content = implode(" ", array_map("trim", $tmpcontent));
 
         preg_match("/<id>(.*?)<\/id>/i", $content, $tmp);
-        $this->id = $tmp[1];
+        $this->id = isset($tmp[1]) ? $tmp[1] : null;
 
         preg_match_all("/<ExecSQL>(.*?)<\/ExecSQL>/i", $content, $tmp);
-        $this->ExecSQL = $tmp[1];
+        $this->ExecSQL = isset($tmp[1]) ? $tmp[1] : [];
 
         preg_match("/<Author>(.*?)<\/Author>/i", $content, $tmp);
-        $this->Author = $tmp[1];
+        $this->Author = isset($tmp[1]) ? $tmp[1] : null;
 
         preg_match("/<Date>(.*?)<\/Date>/i", $content, $tmp);
-        $this->Date = $tmp[1];
+        $this->Date = isset($tmp[1]) ? $tmp[1] : null;
 
         preg_match("/<Description>(.*?)<\/Description>/i", $content, $tmp);
-        $this->Description = $tmp[1];
+        $this->Description = isset($tmp[1]) ? $tmp[1] : null;
     }
 
     public function doit()
     {
+        if (!is_array($this->ExecSQL) || count($this->ExecSQL) === 0) {
+            $this->lasterror =
+                "No executable SQL statements found in update file for update id " .
+                $this->id .
+                ".";
+            return false;
+        }
+
+        $res = true;
+        $sql = "";
         foreach ($this->ExecSQL as $sql) {
             $res = dbexec(trim($sql), true);
 

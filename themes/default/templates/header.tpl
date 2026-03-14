@@ -102,11 +102,11 @@
 						{if $pmp_disable_links != 1}
 						<td class="shortcut-space"></td>
 						<td class="shortcut" onmouseover="this.className='shortcut-hover';" onmouseout="this.className='shortcut';">
-							<a href="http://www.genesworld.net/phpmyprofiler.html"><img src="themes/{$pmp_theme}/images/shortcut-bar/homepage.png" alt="{t}phpMyProfiler Home{/t}" title="{t}phpMyProfiler Home{/t}" style="border: none;"/></a>
+							<a href="http://www.genesworld.net/phpmyprofiler.html" target="_blank"><img src="themes/{$pmp_theme}/images/shortcut-bar/homepage.png" alt="{t}phpMyProfiler Home{/t}" title="{t}phpMyProfiler Home{/t}" style="border: none;"/></a>
 						</td>
 						<td class="shortcut-space"></td>
 						<td class="shortcut" onmouseover="this.className='shortcut-hover';" onmouseout="this.className='shortcut';">
-							<a href="https://www.genesworld.net/phpmyprofiler.html"><img src="themes/{$pmp_theme}/images/shortcut-bar/forum.png" alt="{t}phpMyProfiler Forum{/t}" title="{t}phpMyProfiler Forum{/t}" style="border: none;"/></a>
+							<a href="https://www.genesworld.net/phpmyprofiler.html" target="_blank"><img src="themes/{$pmp_theme}/images/shortcut-bar/forum.png" alt="{t}phpMyProfiler Forum{/t}" title="{t}phpMyProfiler Forum{/t}" style="border: none;"/></a>
 						</td>
 						{/if}
 						<td class="shortcut-space"></td>

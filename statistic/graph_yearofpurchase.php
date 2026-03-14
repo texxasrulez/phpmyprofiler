@@ -31,6 +31,20 @@ if (
 
 require_once "../config.inc.php";
 require_once "../include/functions.php";
+
+if (isset($_GET["t"])) {
+    $candidate_theme = preg_replace("/[^a-z0-9_-]/i", "", (string) $_GET["t"]);
+    if ($candidate_theme !== "" && is_dir("../themes/" . $candidate_theme)) {
+        $pmp_theme = $candidate_theme;
+    }
+}
+if (isset($_GET["c"])) {
+    $candidate_css = preg_replace("/[^a-z0-9_.-]/i", "", (string) $_GET["c"]);
+    if ($candidate_css !== "" && is_file("../themes/" . $pmp_theme . "/css/" . $candidate_css)) {
+        $pmp_theme_css = $candidate_css;
+    }
+}
+
 DEFINE("TTF_DIR", "../include/font/");
 DEFINE("CACHE_DIR", "../cache/");
 DEFINE("USE_CACHE", $pmp_thumbnail_cache);
@@ -41,15 +55,18 @@ $graph_lang =
     isset($_SESSION["lang_id"]) && $_SESSION["lang_id"] !== ""
         ? $_SESSION["lang_id"]
         : $pmp_lang_default;
+
+$graph_cache_suffix = preg_replace("/[^a-z0-9_-]/i", "_", strtolower($pmp_theme . "_" . $pmp_theme_css));
+$graph_cache_file = "graph_yearofpurchase_" . $graph_lang . "_" . $graph_cache_suffix . ".png";
 require_once "../include/jpgraph/jpgraph_bar.php";
 
 global $_SESSION;
 
 if (
     $pmp_thumbnail_cache &&
-    is_file("../cache/graph_yearofpurchase_" . $graph_lang . ".png")
+    is_file("../cache/" . $graph_cache_file)
 ) {
-    $filename = "../cache/graph_yearofpurchase_" . $graph_lang . ".png";
+    $filename = "../cache/" . $graph_cache_file;
     header("Content-Type: image/png");
     header("Cache-Control: must-revalidate");
     header($ExpStr);
@@ -89,27 +106,30 @@ if (
         $graph = new Graph(
             550,
             12 * $rows + 40,
-            "graph_yearofpurchase_" . $graph_lang . ".png",
+            $graph_cache_file,
         );
         $graph->SetScale("textlin");
         $theme_class = new pmpTheme();
         $graph->SetTheme($theme_class);
         $graph->Set90AndMargin(150, 20, 20, 20);
 
+        $axisLineColor = $theme_class->GetAxisLineColor();
+        $axisTextColor = $theme_class->GetAxisTextColor();
+
         // Setup color for axis and labels
-        $graph->xaxis->SetColor("black", "black");
-        $graph->yaxis->SetColor("black", "black");
+        $graph->xaxis->SetColor($axisLineColor, $axisTextColor);
+        $graph->yaxis->SetColor($axisLineColor, $axisTextColor);
 
         // Setup font for axis
         $graph->xaxis->SetFont($fontmedium, FS_NORMAL, 8);
         $graph->yaxis->SetFont($fontmedium, FS_NORMAL, 10);
 
         // Setup X-axis title (color & font)
-        $graph->xaxis->title->SetColor("black");
+        $graph->xaxis->title->SetColor($axisTextColor);
         $graph->xaxis->title->SetFont($fontmedium, FS_NORMAL, 10);
 
         // Setup the grid
-        $graph->xgrid->SetColor("#2a2a2a");
+        $graph->xgrid->SetColor($theme_class->GetGridColor());
         $graph->xgrid->SetLineStyle("dashed");
 
         // Create the bar pot
@@ -120,8 +140,7 @@ if (
         $graph->xaxis->SetTickLabels($Legend);
 
         // Setup color for gradient fill style
-        $tcol = [255, 204, 00];
-        $fcol = [255, 100, 100];
+        list($fcol, $tcol) = $theme_class->GetBarGradient();
         $bplot->SetFillGradient($fcol, $tcol, GRAD_HOR);
 
         $graph->Add($bplot);
@@ -131,6 +150,7 @@ if (
         header("Cache-Control: must-revalidate");
         header($ExpStr);
         $graph->img->SetExpired(false);
+        $graph->img->SetTransparent("white");
         $graph->Stroke();
     }
 

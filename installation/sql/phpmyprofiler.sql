@@ -494,7 +494,7 @@ CREATE TABLE `pmp_awards` (
   `prodyear` varchar(4),
   `award` varchar(100) NOT NULL,
   `awardyear` varchar(4) NOT NULL,
-  `category` varchar(120) NOT NULL,
+  `category` varchar(512) NOT NULL,
   `winner` tinyint(1) NOT NULL default '0',
   `nominee` varchar(300) default NULL,
   INDEX `idx_awards_title_prodyear` (`title`,`prodyear`)

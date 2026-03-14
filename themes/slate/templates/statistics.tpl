@@ -44,7 +44,7 @@
 					<li>{t}DVDs with Rating Information{/t}: {$count_rating|number_format:0:$pmp_dec_point:$pmp_thousands_sep}</li>
 				</ul>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_lists.php" alt="{t}Number of DVDs{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_lists.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Number of DVDs{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -135,7 +135,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_regions.php" alt="{t}Regions{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_regions.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Regions{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -156,7 +156,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_localities.php" alt="{t}Localities of DVDs{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_localities.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Localities of DVDs{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -177,7 +177,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_origins.php" alt="{t}Origins of Movies{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_origins.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Origins of Movies{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -198,7 +198,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_ratings.php" alt="{t}Ratings{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_ratings.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Ratings{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -220,7 +220,7 @@
 					{/foreach}
 				</ul>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_yearofpurchase.php" alt="{t}Year of Purchase{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_yearofpurchase.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Year of Purchase{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -242,7 +242,7 @@
 					{/foreach}
 				</ul>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_productiondecade.php" alt="{t}Production Decade{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_productiondecade.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Production Decade{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -264,7 +264,7 @@
 						{/foreach}
 					</ol>
 					{if $pmp_gdlib == 1}
-						<div style="text-align: center;"><img src="statistic/graph_placeofpurchase.php" alt="{t}Place of Purchase{/t}" /></div>
+						<div style="text-align: center;"><img src="statistic/graph_placeofpurchase.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Place of Purchase{/t}" /></div>
 					{/if}
          		</td>
 			</tr>
@@ -286,7 +286,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_genres.php" alt="{t}Genres{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_genres.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Genres{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -307,7 +307,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_studios.php" alt="{t}Studios{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_studios.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Studios{/t}" /></div>
 				{/if}
 			</td>
 		</tr>
@@ -328,7 +328,7 @@
 					{/foreach}
 				</ol>
 				{if $pmp_gdlib == 1}
-					<div style="text-align: center;"><img src="statistic/graph_media_companies.php" alt="{t}Media Companies{/t}" /></div>
+					<div style="text-align: center;"><img src="statistic/graph_media_companies.php?t={$pmp_theme}&amp;c={$pmp_theme_css}" alt="{t}Media Companies{/t}" /></div>
 				{/if}
 			</td>
 		</tr>

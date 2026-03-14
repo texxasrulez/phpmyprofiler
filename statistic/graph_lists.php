@@ -31,6 +31,20 @@ if (
 
 require_once "../config.inc.php";
 require_once "../include/functions.php";
+
+if (isset($_GET["t"])) {
+    $candidate_theme = preg_replace("/[^a-z0-9_-]/i", "", (string) $_GET["t"]);
+    if ($candidate_theme !== "" && is_dir("../themes/" . $candidate_theme)) {
+        $pmp_theme = $candidate_theme;
+    }
+}
+if (isset($_GET["c"])) {
+    $candidate_css = preg_replace("/[^a-z0-9_.-]/i", "", (string) $_GET["c"]);
+    if ($candidate_css !== "" && is_file("../themes/" . $pmp_theme . "/css/" . $candidate_css)) {
+        $pmp_theme_css = $candidate_css;
+    }
+}
+
 DEFINE("TTF_DIR", "../include/font/");
 DEFINE("CACHE_DIR", "../cache/");
 DEFINE("USE_CACHE", $pmp_thumbnail_cache);
@@ -41,15 +55,18 @@ $graph_lang =
     isset($_SESSION["lang_id"]) && $_SESSION["lang_id"] !== ""
         ? $_SESSION["lang_id"]
         : $pmp_lang_default;
+
+$graph_cache_suffix = preg_replace("/[^a-z0-9_-]/i", "_", strtolower($pmp_theme . "_" . $pmp_theme_css));
+$graph_cache_file = "graph_lists_" . $graph_lang . "_" . $graph_cache_suffix . ".png";
 require_once "../include/jpgraph/jpgraph_pie.php";
 require_once "../include/jpgraph/jpgraph_pie3d.php";
 require_once "../custom_media.inc.php";
 
 if (
     $pmp_thumbnail_cache &&
-    is_file("../cache/graph_lists_" . $graph_lang . ".png")
+    is_file("../cache/" . $graph_cache_file)
 ) {
-    $filename = "../cache/graph_lists_" . $graph_lang . ".png";
+    $filename = "../cache/" . $graph_cache_file;
     header("Content-Type: image/png");
     header("Cache-Control: must-revalidate");
     header($ExpStr);
@@ -92,7 +109,7 @@ if (
         }
 
         // Setup the graph
-        $graph = new PieGraph(500, 210, "graph_lists_" . $graph_lang . ".png");
+        $graph = new PieGraph(500, 210, $graph_cache_file);
         $theme_class = new pmpTheme();
         $graph->SetTheme($theme_class);
 
@@ -104,7 +121,7 @@ if (
         $p1->SetLegends($Legend);
 
         $p1->value->SetFont($fontmedium, FS_NORMAL, 10);
-        $p1->value->SetColor("#000000");
+        $p1->value->SetColor($theme_class->GetPieValueColor());
         $p1->value->SetFormat("%d");
         $p1->SetValueType(PIE_VALUE_ABS);
         $graph->legend->SetFont($fontmedium, FS_NORMAL, 10);
@@ -118,6 +135,7 @@ if (
         header("Cache-Control: must-revalidate");
         header($ExpStr);
         $graph->img->SetExpired(false);
+        $graph->img->SetTransparent("white");
         $graph->Stroke();
     }
 

@@ -5,8 +5,8 @@
 	<Author>Rincewind</Author>
 	<Description>DB changes for DVDProfiler 3.8.1</Description>
 	<ExecSQL>ALTER TABLE `pmp_format` DROP color</ExecSQL>
-	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrcolor` tinyint(1) NOT NULL default '0' AFTER `video`</ExECSQL>
-	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrblackandwhite` tinyint(1) NOT NULL default '0' AFTER `clrcolor`</ExECSQL>
-	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrcolorized` tinyint(1) NOT NULL default '0' AFTER `clrblackandwhite`</ExECSQL>
-	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrmixed` tinyint(1) NOT NULL default '0' AFTER `clrcolorized`</ExECSQL>
+	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrcolor` tinyint(1) NOT NULL default '0' AFTER `video`</ExecSQL>
+	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrblackandwhite` tinyint(1) NOT NULL default '0' AFTER `clrcolor`</ExecSQL>
+	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrcolorized` tinyint(1) NOT NULL default '0' AFTER `clrblackandwhite`</ExecSQL>
+	<ExecSQL>ALTER TABLE `pmp_format` ADD COLUMN `clrmixed` tinyint(1) NOT NULL default '0' AFTER `clrcolorized`</ExecSQL>
 </Update>

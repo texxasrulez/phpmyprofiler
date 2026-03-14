@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Update>
+	<id>17</id>
+	<Date>12.03.2026</Date>
+	<Author>Codex</Author>
+	<Description>Increase awards category length for long category names</Description>
+	<ExecSQL>ALTER TABLE `pmp_awards` MODIFY `category` VARCHAR(512) NOT NULL</ExecSQL>
+</Update>

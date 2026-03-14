@@ -120,7 +120,7 @@ table.title {
 }
 
 td.title {
-	background-color : #88938d;
+	background-color : #8c3b17;
 	color : #000000;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size : 16px;
@@ -138,7 +138,7 @@ table.subtitle {
 }
 
 td.subtitle {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border-top : 2px solid #546359;
 	color : #000000;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -170,7 +170,7 @@ td.window-title-left {
 }
 
 td.window-title {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_movie_title.png);
 	color : #ffffff;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -184,7 +184,7 @@ td.window-title {
 }
 
 td.group-title {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_group_title.png);
 	color : #ffffff;
 	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -206,21 +206,21 @@ td.window-title-right {
 }
 
 td.window-side-left {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_movie_side_left.png);
 	background-repeat : repeat-y;
 	width : 5px;
 }
 
 td.window-side-right {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_movie_side_right.png);
 	background-repeat : repeat-y;
 	width : 5px;
 }
 
 td.window-content {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	height : 100%;
 	padding : 4px;
 	text-align : left;
@@ -229,25 +229,25 @@ td.window-content {
 }
 
 td.window-ll {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_movie_ll.png);
 	height : 5px;
 }
 
 td.window-bottom {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_movie_bottom.png);
 	height : 4px;
 }
 
 td.window-lr {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	background-image : url(../images/bg_movie_lr.png);
 	height : 5px;
 }
 
 table.frame {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px solid #546359;
 	border-collapse : collapse;
 	margin-left: 1%;
@@ -259,7 +259,7 @@ table.frame {
 }
 
 td.frame-title {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	color : #546359;
 	margin-top : 10px;
 	padding-left : 4px;
@@ -269,7 +269,7 @@ td.frame-title {
 }
 
 div.frame-title {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	font-weight : bold;
 	text-align : left;
 	position : relative;
@@ -277,13 +277,13 @@ div.frame-title {
 }
 
 td.frame-title-right {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	width : 99%;
 	white-space : nowrap;
 }
 
 td.frame-content {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	color : #000000;
 	font-size : 8pt;
 	padding-left : 1%;
@@ -294,7 +294,7 @@ td.frame-content {
 }
 
 td.frame-content-center {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	color : #000000;
 	font-size : 8pt;
 	padding-left : 1%;
@@ -305,19 +305,19 @@ td.frame-content-center {
 }
 
 table.feature {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 0;
 	width : 100%;
 }
 
 td.feature {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	text-align : left;
 	vertical-align : middle;
 }
 
 table.details {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px solid #546359;
 	border-collapse : collapse;
 	margin-left: 1%;
@@ -339,7 +339,7 @@ td.details-right {
 }
 
 table.properties {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 0 solid #546359;
 	border-collapse : collapse;
 	table-layout: fixed;
@@ -347,7 +347,7 @@ table.properties {
 }
 
 td.propheader {
-	background-color : #88938d;
+	background-color : #8c3b17;
 	color : #ffffff;
 	font-size : 13px;
 	font-weight : bold;
@@ -365,14 +365,14 @@ td.proptitle {
 }
 
 td.propvalue {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border-bottom : 1px solid #c4c9c4;
 	padding : 3px;
 	text-align : left;
 }
 
 td.propvalue_c {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border-bottom : 1px solid #c4c9c4;
 	padding : 3px;
 	text-align : center;
@@ -396,7 +396,7 @@ table.filter {
 }
 
 td.filterheader-left {
-	background-color : #88938d;
+	background-color : #8c3b17;
 	border-bottom : 1px solid #808080;
 	border-right : 1px solid #808080;
 	vertical-align : middle;
@@ -407,7 +407,7 @@ td.filterheader-left {
 }
 
 td.filterheader-right {
-	background-color : #88938d;
+	background-color : #8c3b17;
 	border-bottom : 1px solid #808080;
 	vertical-align : middle;
 	font-weight : bold;
@@ -417,7 +417,7 @@ td.filterheader-right {
 }
 
 td.filter-left {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border-right : 1px solid #808080;
 	vertical-align : top;
 	width : 50%;
@@ -425,14 +425,14 @@ td.filter-left {
 }
 
 td.filter-right {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	vertical-align : top;
 	width : 50%;
 	padding-left : 3px;
 }
 
 td.filtertitle {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	font-weight : bold;
 	text-align : left;
 	vertical-align : top;
@@ -457,41 +457,53 @@ table.list {
 }
 
 th.listheader {
+	background-color: #8c3b17;
+	color : #fbffe8;
 	font-size : 11px;
 	text-align : center;
 	padding : 3px;
 }
 
 th.listheaderleft {
+	background-color: #8c3b17;
+	color : #fbffe8;
 	font-size : 11px;
 	text-align : left;
 	padding : 3px;
+}
+
+th.listheaderleft a:link {
+	color : #fbffe8;
 }
 
 th.listheader {
 	height : 18px;
 }
 
+th.listheader a:link {
+	color : #fbffe8;
+}
+
 td.td0 {
-	background-color : #c4c9c4;
+	background-color : #fef7f3;
 	padding : 3px;
 	text-align : left;
 }
 
 td.td0c {
-	background-color : #c4c9c4;
+	background-color : #fef7f3;
 	padding : 3px;
 	text-align : center;
 }
 
 td.td1 {
-	background-color : #d6dbd6;
+	background-color : #fceae2;
 	padding : 3px;
 	text-align : left;
 }
 
 td.td1c {
-	background-color : #d6dbd6;
+	background-color : #fceae2;
 	padding : 3px;
 	text-align : center;
 }
@@ -504,7 +516,7 @@ td.td1c {
 }
 
 .active_liste {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px solid #546359;
 	border-top : 3px solid #6495ed;
 	border-bottom : 1px solid #d6dbd6;
@@ -542,7 +554,7 @@ td.td1c {
 }
 
 a.active_filter {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px dotted #000080;
 	line-height : 19px;
 	padding : 1px;
@@ -551,7 +563,7 @@ a.active_filter {
 }
 
 a.active_filter:hover {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px dotted #000080;
 	color : #333333;
 	line-height : 19px;
@@ -582,7 +594,7 @@ a.inactive_filter:hover {
 }
 
 table.bottominfo {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 0;
 	border-collapse : collapse;
 	margin-top : 8px;
@@ -609,13 +621,13 @@ td.bottominfo-right {
 }
 
 table.cover {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 0;
 	width : 98%;
 }
 
 td.cover {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px solid #546359;
 	padding : 3px;
 	text-align : center;
@@ -648,7 +660,7 @@ a.screen {
 }
 
 table.gb_form {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 0 solid #546359;
 	border-collapse : collapse;
 	padding : 0;
@@ -657,7 +669,7 @@ table.gb_form {
 }
 
 table.gb_entries {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	border : 1px solid #546359;
 	border-collapse : collapse;
 	padding : 0;
@@ -728,7 +740,7 @@ table.hidden {
 }
 
 td.bright {
-	background-color : #d6dbd6;
+	background-color : #fdeee8;
 	padding : 3px;
 }
 
@@ -876,7 +888,7 @@ a:hover {
 }
 
 td.banner {
-	background-color: #2d3a52;
+	background-color: #66270a;
 	background-image: none;
 	border-bottom: 1px solid #1e2738;
 	color: #fff3d6;
@@ -898,7 +910,7 @@ td.shortcut-hover {
 }
 
 td.title {
-	background-color: #2d3a52;
+	background-color: #66270a;
 	color: #fff3d6;
 }
 
@@ -909,7 +921,7 @@ td.window-side-right,
 td.window-ll,
 td.window-bottom,
 td.window-lr {
-	background-color: #fff9f2;
+	background-color: #fdeee8;
 	background-image: none;
 }
 
@@ -923,7 +935,7 @@ td.window-title-right {
 }
 
 table.frame {
-	background-color: #fff9f2;
+	background-color: #dbe4db;
 	border: 1px solid #c8ab93;
 }
 
