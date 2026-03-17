@@ -12,17 +12,17 @@ This repository currently identifies itself as `1.2 dev`.
 - Generates collection statistics and graphs for ratings, genres, studios, regions, purchase history, origins, and more.
 - Includes an admin area for parsing collections, moderating reviews/guestbook entries, managing news, pictures, screenshots, awards, and preferences.
 - Supports multiple themes (`default`, `slate`, `sunrise`) and bundled translations (`en`, `de`, `dk`, `nl`, `no`).
-- Includes custom media icon support via [`custom_media.inc.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/custom_media.inc.php).
+- Includes custom media icon support via `custom_media.inc.php`.
 
 ## Project Layout
 
-- [`index.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/index.php) is the front controller for the public site.
-- [`admin/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/admin) contains the administration UI and import tools.
-- [`installation/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/installation) contains the browser-based installer.
-- [`include/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/include) contains shared runtime code, Smarty, graphing, and the MySQL compatibility layer.
-- [`themes/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/themes) contains templates, CSS, translations, and theme assets.
-- [`xml/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/xml) is the upload/import workspace for collection exports.
-- [`cover/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/cover), [`pictures/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/pictures), [`screenshots/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/screenshots), [`cache/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/cache), and [`templates_c/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/templates_c) store generated or uploaded assets.
+- [`index.php`](/index.php) is the front controller for the public site.
+- [`admin/`](/admin) contains the administration UI and import tools.
+- [`installation/`](/installation) contains the browser-based installer.
+- [`include/`](/include) contains shared runtime code, Smarty, graphing, and the MySQL compatibility layer.
+- [`themes/`](/themes) contains templates, CSS, translations, and theme assets.
+- [`xml/`](/xml) is the upload/import workspace for collection exports.
+- [`cover/`](/cover), [`pictures/`](/pictures), [`screenshots/`](/screenshots), [`cache/`](/cache), and [`templates_c/`](/templates_c) store generated or uploaded assets.
 
 ## Requirements
 
@@ -35,7 +35,7 @@ The installer checks for these server capabilities:
 
 Practical note for modern deployments:
 
-- The application is still a legacy PHP app architecturally, but this repo includes a MySQL compatibility layer in [`include/mysql_compat.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/include/mysql_compat.php) and other modernization work.
+- The application is still a legacy PHP app architecturally, but this repo includes a MySQL compatibility layer in [`include/mysql_compat.php`](/include/mysql_compat.php) and other modernization work.
 - The codebase still relies heavily on `mysql_*` calls through that shim, so compatibility should be validated against your target PHP and MySQL/MariaDB versions before production use.
 
 ## Installation
@@ -56,9 +56,9 @@ Practical note for modern deployments:
    - `passwd.inc.php`
 4. Open `/installation/` in a browser.
 5. Enter database connection details and the public base URL.
-6. Let the installer create/populate the schema from [`installation/sql/phpmyprofiler.sql`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/installation/sql/phpmyprofiler.sql) and [`installation/sql/phpmyprofiler_data.sql`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/installation/sql/phpmyprofiler_data.sql).
+6. Let the installer create/populate the schema from [`installation/sql/phpmyprofiler.sql`](/installation/sql/phpmyprofiler.sql) and [`installation/sql/phpmyprofiler_data.sql`](/installation/sql/phpmyprofiler_data.sql).
 7. Create the administrator account.
-8. Delete the [`installation/`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/installation) directory after setup. The app explicitly warns that leaving it in place is unsafe.
+8. Delete the [`installation/`](/installation) directory after setup. The app explicitly warns that leaving it in place is unsafe.
 
 If `installation/` still exists, both the public site and admin area redirect back into the installer.
 
@@ -83,7 +83,7 @@ Parsing also refreshes derived data such as collection statistics and cached ass
 The admin area includes tools for:
 
 - Uploading and parsing collection exports.
-- Editing site preferences stored in [`config.inc.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/config.inc.php).
+- Editing site preferences stored in [`config.inc.php`](/config.inc.php).
 - Moderating guestbook entries and visitor reviews.
 - Managing news posts.
 - Uploading pictures and screenshots.
@@ -94,7 +94,7 @@ The admin area includes tools for:
 
 ## Public Features
 
-The public site routes through [`index.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/index.php) and exposes pages such as:
+The public site routes through [`index.php`](/index.php) and exposes pages such as:
 
 - Start page / latest additions
 - Film profile pages
@@ -111,7 +111,7 @@ The public site routes through [`index.php`](/home/gene/Documents/AI/Github Mirr
 
 ## Configuration
 
-Most settings are stored in [`config.inc.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/config.inc.php) and are also editable from the admin preferences screen. Configuration areas include:
+Most settings are stored in [`config.inc.php`](/config.inc.php) and are also editable from the admin preferences screen. Configuration areas include:
 
 - Database connection and table prefix
 - Base URL and page title
@@ -124,11 +124,11 @@ Most settings are stored in [`config.inc.php`](/home/gene/Documents/AI/Github Mi
 - Review/guestbook behavior
 - Update checks and external rating refresh behavior
 
-Admin credentials are stored separately in [`passwd.inc.php`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/passwd.inc.php).
+Admin credentials are stored separately in [`passwd.inc.php`](/passwd.inc.php).
 
 ## Development Notes
 
-- PHP formatting support is configured through [`package.json`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/package.json) with Prettier and `@prettier/plugin-php`.
+- PHP formatting support is configured through [`package.json`](/package.json) with Prettier and `@prettier/plugin-php`.
 - The app uses bundled Smarty templates rather than a framework.
 - There is no obvious automated test suite in this repository.
 - The code mixes legacy application structure with newer hardening work such as CSRF checks, stricter session settings, and HTTP security headers.
@@ -142,4 +142,4 @@ Admin credentials are stored separately in [`passwd.inc.php`](/home/gene/Documen
 
 ## License
 
-This project is licensed under the GNU General Public License, version 2 or later. See [`LICENSE`](/home/gene/Documents/AI/Github Mirror/phpmyprofiler/LICENSE).
+This project is licensed under the GNU General Public License, version 2 or later. See [`LICENSE`](/LICENSE).
